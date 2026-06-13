@@ -1,44 +1,146 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-  <link href='https://unpkg.com/css.gg@2.0.0/icons/css/home.css' rel='stylesheet'>
-  <link href='https://unpkg.com/css.gg@2.0.0/icons/css/info.css' rel='stylesheet'>
   <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kripl — Python Developer</title>
+  <link rel="icon" href="img/icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
-  <script src="test.js"></script>
-  <title>Kripl test website</title>
-  <link rel="icon" type="image/x-icon" href="img/icon.png">
 </head>
-
 <body>
-  <header>
-    <nav>
-      <a href="#" class="home"style="text-decoration: none;">
-        <i class="gg-home"></i>
-        <div class="nav-home">Home</div>
 
+  <nav>
+    <a href="#" class="logo">kripl<span>.py</span></a>
+    <ul>
+      <li><a href="#skills">skills</a></li>
+      <li><a href="#projects">projects</a></li>
+      <li><a href="#contact">contact</a></li>
+    </ul>
+  </nav>
+
+  <section class="hero">
+    <div class="terminal">
+      <div class="terminal-bar">
+        <span class="traffic-light red"></span>
+        <span class="traffic-light yellow"></span>
+        <span class="traffic-light green"></span>
+        <span class="terminal-label">Python 3.12.0 (interactive)</span>
+      </div>
+      <div class="terminal-body">
+        <p class="tline"><span class="ps1">&gt;&gt;&gt; </span><span id="l1"></span></p>
+        <p class="tline" id="r2"><span class="ps2">... </span><span id="l2"></span></p>
+        <p class="tline" id="r3"><span class="ps2">... </span><span id="l3"></span></p>
+        <p class="tline" id="r4"><span class="ps2">... </span><span id="l4"></span></p>
+        <p class="tline" id="r5"><span class="ps1">&gt;&gt;&gt; </span><span id="l5"></span></p>
+        <div id="result">
+          <span class="result-name">Kripl</span>
+          <span class="result-role">// Python Developer</span>
+        </div>
+        <p class="tline" id="r6"><span class="ps1">&gt;&gt;&gt; </span><span class="caret">▌</span></p>
+      </div>
+    </div>
+    <a href="#skills" class="scroll-down">↓ scroll</a>
+  </section>
+
+  <section id="skills">
+    <p class="label"># skills</p>
+    <div class="imports">
+      <p><span class="kw">import</span> <span class="name">Python</span>, <span class="name">FastAPI</span>, <span class="name">Django</span></p>
+      <p><span class="kw">from</span> <span class="name">databases</span> <span class="kw">import</span> <span class="name">PostgreSQL</span>, <span class="name">Redis</span></p>
+      <p><span class="kw">from</span> <span class="name">messaging</span> <span class="kw">import</span> <span class="name">aiogram</span>, <span class="name">Telethon</span></p>
+      <p><span class="kw">from</span> <span class="name">scraping</span> <span class="kw">import</span> <span class="name">BeautifulSoup</span>, <span class="name">Selenium</span></p>
+      <p><span class="kw">from</span> <span class="name">infra</span> <span class="kw">import</span> <span class="name">Docker</span>, <span class="name">Git</span>, <span class="name">Linux</span></p>
+    </div>
+  </section>
+
+  <section id="projects">
+    <p class="label"># projects</p>
+    <div class="grid">
+
+      <article>
+        <p class="comment"># telegram · alerts</p>
+        <h3>Monitoring Bot</h3>
+        <p>Telegram bot that watches services and sends alerts when something goes down.</p>
+        <p class="stack">Python · aiogram · Redis</p>
+      </article>
+
+      <article>
+        <p class="comment"># api · sports data</p>
+        <h3>Football FastAPI</h3>
+        <p>REST API for football statistics with async endpoints and live score updates.</p>
+        <p class="stack">FastAPI · PostgreSQL · SQLAlchemy</p>
+      </article>
+
+      <article>
+        <p class="comment"># scraper · automation</p>
+        <h3>Soccerway Parser</h3>
+        <p>Automated scraper that pulls match results and team stats on a schedule.</p>
+        <p class="stack">Python · BeautifulSoup · Selenium</p>
+      </article>
+
+      <article>
+        <p class="comment"># auth · jwt</p>
+        <h3>Auth Service</h3>
+        <p>Standalone authentication microservice with JWT, refresh tokens and rate limiting.</p>
+        <p class="stack">FastAPI · JWT · PostgreSQL</p>
+      </article>
+
+    </div>
+  </section>
+
+  <section id="contact">
+    <p class="label"># contact</p>
+    <div class="links">
+      <a href="https://github.com/Kripl2232" target="_blank" rel="noopener">
+        <span class="link-key">github</span>
+        <span class="link-arrow">→</span>
+        <span>Kripl2232</span>
       </a>
-      <button class="about" style="text-decoration: none;" onclick=ass() >
-        <i class="gg-info"></i>
-        <div class="nav-info">About your ass</div>
+      <a href="mailto:krippi22322@gmail.com">
+        <span class="link-key">email</span>
+        <span class="link-arrow">→</span>
+        <span>krippi22322@gmail.com</span>
+      </a>
+    </div>
+  </section>
 
-      </button>
-    </nav>
-    <!-- <div class="input-group">
-      <input placeholder="Search" class="input" name="text" type="text" autocomplete="off">
-    </div> -->
-  </header>
-  <main>
-    
-  </main>
+  <footer>
+    <span>Kripl · 2024</span>
+  </footer>
+
   <script>
-    function ass(){
-      window.alert("Ты гей")
-    }
-  </script>
-</body>
+    const steps = [
+      ['l1', null,  'me = Developer('],
+      ['l2', 'r2',  '    name = "Kripl",'],
+      ['l3', 'r3',  '    role = "Python Developer",'],
+      ['l4', 'r4',  ')'],
+      ['l5', 'r5',  'repr(me)'],
+    ];
 
+    function type(el, text, done) {
+      let i = 0;
+      const t = setInterval(() => {
+        el.textContent = text.slice(0, ++i);
+        if (i === text.length) { clearInterval(t); setTimeout(done, 160); }
+      }, 38);
+    }
+
+    function run(i) {
+      if (i >= steps.length) {
+        document.getElementById('result').style.display = 'block';
+        document.getElementById('r6').style.display = 'flex';
+        return;
+      }
+      const [elId, rowId, text] = steps[i];
+      if (rowId) document.getElementById(rowId).style.display = 'flex';
+      type(document.getElementById(elId), text, () => run(i + 1));
+    }
+
+    window.addEventListener('DOMContentLoaded', () => setTimeout(() => run(0), 300));
+  </script>
+
+</body>
 </html>
