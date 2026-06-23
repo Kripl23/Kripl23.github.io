@@ -1,124 +1,697 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Kripl — Python Developer</title>
+  <title>Roman Kolchin — Python Developer</title>
   <link rel="icon" href="img/icon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=Space+Mono:wght@400;700&family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
-  <nav>
-    <a href="#" class="logo">kripl<span>.py</span></a>
-    <ul>
-      <li><a href="#skills">skills</a></li>
-      <li><a href="#projects">projects</a></li>
-      <li><a href="#contact">contact</a></li>
-    </ul>
-  </nav>
+  <!-- background textures -->
+  <div class="dot-grid" aria-hidden="true"></div>
+  <svg class="grain" aria-hidden="true">
+    <filter id="grain-filter">
+      <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="2" stitchTiles="stitch"></feTurbulence>
+    </filter>
+    <rect width="100%" height="100%" filter="url(#grain-filter)"></rect>
+  </svg>
 
-  <section class="hero">
-    <div class="terminal">
-      <div class="terminal-bar">
-        <span class="traffic-light red"></span>
-        <span class="traffic-light yellow"></span>
-        <span class="traffic-light green"></span>
-        <span class="terminal-label">Python 3.12.0 (interactive)</span>
-      </div>
-      <div class="terminal-body">
-        <p class="tline"><span class="ps1">&gt;&gt;&gt; </span><span id="l1"></span></p>
-        <p class="tline" id="r2"><span class="ps2">... </span><span id="l2"></span></p>
-        <p class="tline" id="r3"><span class="ps2">... </span><span id="l3"></span></p>
-        <p class="tline" id="r4"><span class="ps2">... </span><span id="l4"></span></p>
-        <p class="tline" id="r5"><span class="ps1">&gt;&gt;&gt; </span><span id="l5"></span></p>
-        <div id="result">
-          <span class="result-name">Kripl</span>
-          <span class="result-role">// Python Developer</span>
+  <!-- custom cursor (desktop only) -->
+  <div id="cursor-dot" aria-hidden="true"></div>
+  <div id="cursor-ring" aria-hidden="true"></div>
+
+  <!-- scroll progress -->
+  <div class="scroll-track" aria-hidden="true">
+    <div id="scroll-fill"></div>
+  </div>
+
+  <!-- top bar -->
+  <header>
+    <a href="#top" class="bar-name" data-cursor>Roman Kolchin<span>®</span></a>
+    <div class="bar-center">
+      <span class="bar-dot" aria-hidden="true"></span>
+      <span data-t="status"></span>
+      <span class="bar-sep" aria-hidden="true">|</span>
+      <span id="clock"></span>
+    </div>
+    <div class="bar-right">
+      <button class="lang-btn" data-lang="ru">RU</button>
+      <button class="lang-btn" data-lang="en">EN</button>
+      <button class="lang-btn" data-lang="ja">JA</button>
+      <button class="menu-btn magnetic" data-cursor id="menu-toggle" aria-expanded="false">MENU</button>
+      <nav class="menu-dropdown" id="menu-dropdown" hidden>
+        <a href="#about"      data-cursor data-menu-link><span data-t="nav1"></span><span>02</span></a>
+        <a href="#skills"     data-cursor data-menu-link><span data-t="nav2"></span><span>03</span></a>
+        <a href="#projects"   data-cursor data-menu-link><span data-t="nav3"></span><span>04</span></a>
+        <a href="#experience" data-cursor data-menu-link><span data-t="nav4"></span><span>05</span></a>
+        <a href="#contact"    data-cursor data-menu-link><span data-t="nav5"></span><span>06</span></a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ── 01 HERO ─────────────────────────────────────────── -->
+  <section id="top" class="hero">
+    <svg class="hero-ring" viewBox="0 0 200 200" aria-hidden="true">
+      <circle cx="100" cy="100" r="98" fill="none" stroke="#7C5CFF" stroke-width="0.6" stroke-dasharray="1 9"/>
+      <circle cx="100" cy="100" r="74" fill="none" stroke="#ECEAE4" stroke-width="0.4" stroke-dasharray="1 13" opacity="0.25"/>
+    </svg>
+    <span class="reg-mark reg-tl" aria-hidden="true">⊕</span>
+    <span class="reg-mark reg-br" aria-hidden="true">⊕</span>
+    <span class="ghost-num" aria-hidden="true">01</span>
+
+    <div class="hero-inner">
+      <p class="hero-kicker" data-t="kicker"></p>
+      <h1>
+        <span class="h1-solid">PYTHON</span>
+        <span class="h1-outline" data-t="role2"></span>
+      </h1>
+
+      <div class="hero-row">
+        <div class="hero-left">
+          <p class="hero-lead" data-t="lead"></p>
+          <div class="hero-ctas">
+            <a href="#projects" class="btn-primary magnetic" data-cursor>
+              <span data-t="ctaWork"></span> <span>→</span>
+            </a>
+            <a href="#contact" class="btn-ghost" data-cursor data-t="ctaContact"></a>
+          </div>
+          <p class="hero-meta">©2026 · <span data-t="meta"></span></p>
         </div>
-        <p class="tline" id="r6"><span class="ps1">&gt;&gt;&gt; </span><span class="caret">▌</span></p>
+
+        <div class="hero-right">
+          <div class="code-card">
+            <div class="code-card-bar">
+              <span class="code-dot violet"></span>
+              <span class="code-dot dark"></span>
+              <span class="code-dot dark"></span>
+              <span class="code-filename">health.py</span>
+              <span class="code-version">python 3.12</span>
+            </div>
+            <pre id="codepre"></pre>
+          </div>
+          <p class="code-caption" data-t="caption"></p>
+        </div>
       </div>
     </div>
-    <a href="#skills" class="scroll-down">↓ scroll</a>
   </section>
 
-  <section id="skills">
-    <p class="label"># skills</p>
-    <div class="imports">
-      <p><span class="kw">import</span> <span class="name">Python</span>, <span class="name">FastAPI</span>, <span class="name">Django</span></p>
-      <p><span class="kw">from</span> <span class="name">databases</span> <span class="kw">import</span> <span class="name">PostgreSQL</span>, <span class="name">Redis</span></p>
-      <p><span class="kw">from</span> <span class="name">messaging</span> <span class="kw">import</span> <span class="name">aiogram</span>, <span class="name">Telethon</span></p>
-      <p><span class="kw">from</span> <span class="name">scraping</span> <span class="kw">import</span> <span class="name">BeautifulSoup</span>, <span class="name">Selenium</span></p>
-      <p><span class="kw">from</span> <span class="name">infra</span> <span class="kw">import</span> <span class="name">Docker</span>, <span class="name">Git</span>, <span class="name">Linux</span></p>
+  <!-- ── 02 ABOUT ───────────────────────────────────────── -->
+  <section id="about">
+    <span class="ghost-num" aria-hidden="true">02</span>
+    <p class="section-label" data-t="aboutLabel"></p>
+    <div class="about-cols">
+      <div class="about-col" data-reveal="0">
+        <h2 data-t="aboutHi"></h2>
+        <p class="about-lead" data-t="aboutLead"></p>
+      </div>
+      <div class="about-col" data-reveal="90">
+        <div class="photo-frame">
+          <div class="photo-placeholder" aria-label="Фото">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2">
+              <rect x="3" y="3" width="18" height="18" rx="2"/>
+              <circle cx="8.5" cy="8.5" r="1.5"/>
+              <path d="m21 15-5-5L5 21"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+      <div class="about-col" data-reveal="170">
+        <p data-t="aboutP1"></p>
+        <p data-t="aboutP2"></p>
+        <dl class="specs">
+          <div class="spec-row"><dt data-t="spec1k"></dt><dd data-t="spec1v"></dd></div>
+          <div class="spec-row"><dt data-t="spec2k"></dt><dd data-t="spec2v"></dd></div>
+          <div class="spec-row"><dt data-t="spec3k"></dt><dd data-t="spec3v"></dd></div>
+          <div class="spec-row"><dt data-t="spec4k"></dt><dd data-t="spec4v"></dd></div>
+        </dl>
+      </div>
     </div>
   </section>
 
+  <!-- ── 03 SKILLS ──────────────────────────────────────── -->
+  <section id="skills" class="skills-section">
+    <div class="skills-inner">
+      <span class="ghost-num" aria-hidden="true">03</span>
+      <p class="section-label" data-t="skillsLabel"></p>
+      <h2 data-t="skillsTitle"></h2>
+      <p class="skills-note" data-t="skillsNote"></p>
+    </div>
+
+    <div class="ticker-wrap">
+      <div class="ticker" id="ticker" aria-hidden="true">
+        <div class="ticker-band">
+          <span class="tk">Python</span><span class="tk-dot">◆</span>
+          <span class="tk">FastAPI</span><span class="tk-dot">◆</span>
+          <span class="tk">Django</span><span class="tk-dot">◆</span>
+          <span class="tk">PostgreSQL</span><span class="tk-dot">◆</span>
+          <span class="tk">Redis</span><span class="tk-dot">◆</span>
+          <span class="tk">aiogram</span><span class="tk-dot">◆</span>
+          <span class="tk">Docker</span><span class="tk-dot">◆</span>
+          <span class="tk">Linux</span><span class="tk-dot">◆</span>
+          <span class="tk">SQLAlchemy</span><span class="tk-dot">◆</span>
+          <span class="tk">Git</span><span class="tk-dot">◆</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="skills-grid skills-inner">
+      <div class="skill-group">
+        <h3 data-t="cat1"></h3>
+        <div class="chips">
+          <span class="chip">Python</span>
+          <span class="chip">SQL</span>
+          <span class="chip">Bash</span>
+        </div>
+      </div>
+      <div class="skill-group">
+        <h3 data-t="cat2"></h3>
+        <div class="chips">
+          <span class="chip">Django</span>
+          <span class="chip">FastAPI</span>
+          <span class="chip">Flask</span>
+        </div>
+      </div>
+      <div class="skill-group">
+        <h3 data-t="cat3"></h3>
+        <div class="chips">
+          <span class="chip">PostgreSQL</span>
+          <span class="chip">Redis</span>
+          <span class="chip">SQLAlchemy</span>
+        </div>
+      </div>
+      <div class="skill-group">
+        <h3 data-t="cat4"></h3>
+        <div class="chips">
+          <span class="chip">Docker</span>
+          <span class="chip">Nginx</span>
+          <span class="chip">Linux</span>
+          <span class="chip">Git</span>
+        </div>
+      </div>
+      <div class="skill-group">
+        <h3 data-t="cat5"></h3>
+        <div class="chips">
+          <span class="chip">aiogram</span>
+          <span class="chip">Celery</span>
+          <span class="chip">REST API</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── 04 PROJECTS ────────────────────────────────────── -->
   <section id="projects">
-    <p class="label"># projects</p>
-    <div class="grid">
+    <span class="ghost-num" aria-hidden="true">04</span>
+    <p class="section-label" data-t="projLabel"></p>
+    <h2 data-t="projTitle"></h2>
+    <div class="project-list">
 
-      <article>
-        <p class="comment"># telegram · alerts</p>
-        <h3>Monitoring Bot</h3>
-        <p>Telegram bot that watches services and sends alerts when something goes down.</p>
-        <p class="stack">Python · aiogram · Redis</p>
-      </article>
-      
+      <a href="https://github.com/Kripl2232" target="_blank" rel="noopener" class="project-row" data-cursor>
+        <span class="proj-num">01</span>
+        <div class="proj-body">
+          <div class="proj-main">
+            <h3>Football FastAPI</h3>
+            <p data-t="proj1desc"></p>
+          </div>
+          <div class="proj-meta">
+            <span class="proj-year">2025</span>
+            <div class="proj-tags">
+              <span>FastAPI</span><span>PostgreSQL</span><span>SQLAlchemy</span>
+            </div>
+            <span class="proj-arrow">→</span>
+          </div>
+        </div>
+      </a>
+
+      <a href="https://github.com/Kripl2232" target="_blank" rel="noopener" class="project-row" data-cursor>
+        <span class="proj-num">02</span>
+        <div class="proj-body">
+          <div class="proj-main">
+            <h3>Monitoring Bot</h3>
+            <p data-t="proj2desc"></p>
+          </div>
+          <div class="proj-meta">
+            <span class="proj-year">2024</span>
+            <div class="proj-tags">
+              <span>Python</span><span>aiogram</span><span>Redis</span>
+            </div>
+            <span class="proj-arrow">→</span>
+          </div>
+        </div>
+      </a>
+
+      <a href="https://github.com/Kripl2232" target="_blank" rel="noopener" class="project-row" data-cursor>
+        <span class="proj-num">03</span>
+        <div class="proj-body">
+          <div class="proj-main">
+            <h3>Soccerway Parser</h3>
+            <p data-t="proj3desc"></p>
+          </div>
+          <div class="proj-meta">
+            <span class="proj-year">2024</span>
+            <div class="proj-tags">
+              <span>Python</span><span>BeautifulSoup</span><span>Selenium</span>
+            </div>
+            <span class="proj-arrow">→</span>
+          </div>
+        </div>
+      </a>
+
+      <a href="https://github.com/Kripl2232" target="_blank" rel="noopener" class="project-row" data-cursor>
+        <span class="proj-num">04</span>
+        <div class="proj-body">
+          <div class="proj-main">
+            <h3>Auth Service</h3>
+            <p data-t="proj4desc"></p>
+          </div>
+          <div class="proj-meta">
+            <span class="proj-year">2023</span>
+            <div class="proj-tags">
+              <span>FastAPI</span><span>JWT</span><span>PostgreSQL</span>
+            </div>
+            <span class="proj-arrow">→</span>
+          </div>
+        </div>
+      </a>
+
     </div>
   </section>
 
-  <section id="contact">
-    <p class="label"># contact</p>
-    <div class="links">
-      <a href="https://github.com/Kripl2232" target="_blank" rel="noopener">
-        <span class="link-key">github</span>
-        <span class="link-arrow">→</span>
-        <span>Kripl2232</span>
-      </a>
-      <a href="mailto:krippi22322@gmail.com">
-        <span class="link-key">email</span>
-        <span class="link-arrow">→</span>
-        <span>krippi22322@gmail.com</span>
-      </a>
+  <!-- ── 05 EXPERIENCE ──────────────────────────────────── -->
+  <section id="experience">
+    <span class="ghost-num" aria-hidden="true">05</span>
+    <p class="section-label" data-t="expLabel"></p>
+    <h2 data-t="expTitle"></h2>
+    <div class="timeline">
+      <div class="timeline-line" aria-hidden="true"></div>
+
+      <div class="timeline-entry" data-reveal="0">
+        <div class="timeline-node" aria-hidden="true"><div></div></div>
+        <div class="timeline-content">
+          <p class="tl-period" data-t="exp1period"></p>
+          <h3 data-t="exp1role"></h3>
+          <p class="tl-org" data-t="exp1org"></p>
+          <p data-t="exp1desc"></p>
+        </div>
+      </div>
+
+      <div class="timeline-entry" data-reveal="60">
+        <div class="timeline-node" aria-hidden="true"><div></div></div>
+        <div class="timeline-content">
+          <p class="tl-period" data-t="exp2period"></p>
+          <h3 data-t="exp2role"></h3>
+          <p class="tl-org" data-t="exp2org"></p>
+          <p data-t="exp2desc"></p>
+        </div>
+      </div>
+
+      <div class="timeline-entry" data-reveal="120">
+        <div class="timeline-node" aria-hidden="true"><div></div></div>
+        <div class="timeline-content">
+          <p class="tl-period" data-t="exp3period"></p>
+          <h3 data-t="exp3role"></h3>
+          <p class="tl-org" data-t="exp3org"></p>
+          <p data-t="exp3desc"></p>
+        </div>
+      </div>
     </div>
   </section>
 
-  <footer>
-    <span>Kripl · 2024</span>
-  </footer>
+  <!-- ── 06 CONTACT ────────────────────────────────────── -->
+  <section id="contact" class="contact-section">
+    <span class="ghost-num" aria-hidden="true">06</span>
+    <p class="section-label" data-t="contactLabel"></p>
+    <h2 class="contact-title" data-t="contactTitle"></h2>
+    <p class="contact-note" data-t="contactNote"></p>
+    <a href="mailto:krippi22322@gmail.com" class="btn-email magnetic" data-cursor data-reveal="0">
+      <span data-t="contactCta"></span> <span>→</span>
+    </a>
+
+    <div class="socials" data-reveal="80">
+      <a href="https://github.com/Kripl2232" target="_blank" rel="noopener" class="social-row" data-cursor>
+        <span class="social-label">GitHub</span>
+        <span class="social-handle">@Kripl2232 <span class="social-arrow">→</span></span>
+      </a>
+      <a href="mailto:krippi22322@gmail.com" class="social-row" data-cursor>
+        <span class="social-label">Email</span>
+        <span class="social-handle">krippi22322@gmail.com <span class="social-arrow">→</span></span>
+      </a>
+    </div>
+
+    <footer>
+      <span>©2026 Roman Kolchin</span>
+      <span id="clock2"></span>
+      <span data-t="footerNote"></span>
+    </footer>
+  </section>
 
   <script>
-    const steps = [
-      ['l1', null,  'me = Developer('],
-      ['l2', 'r2',  '    name = "Kripl",'],
-      ['l3', 'r3',  '    role = "Python Developer",'],
-      ['l4', 'r4',  ')'],
-      ['l5', 'r5',  'repr(me)'],
-    ];
+    const T = {
+      ru: {
+        status:      'ОТКРЫТ К РАБОТЕ',
+        kicker:      '// BACKEND-РАЗРАБОТЧИК',
+        role2:       'Разработчик',
+        lead:        'Проектирую и собираю серверную часть: API, очереди задач и работу с данными — на Python.',
+        ctaWork:     'Смотреть работы',
+        ctaContact:  'Связаться',
+        meta:        'БАЗИРУЮСЬ В РОССИИ',
+        caption:     'рис.01 — крошечный сервис на FastAPI',
+        nav1: 'Обо мне', nav2: 'Стек', nav3: 'Проекты', nav4: 'Опыт', nav5: 'Контакты',
+        aboutLabel:  '02 / ОБО МНЕ',
+        aboutHi:     'Привет!',
+        aboutLead:   'Я Роман Колчин — backend-разработчик, специализируюсь на Python.',
+        aboutP1:     'Собираю надёжные серверные системы: REST API, телеграм-боты и обработку данных. Сейчас углубляюсь в Django и FastAPI.',
+        aboutP2:     'Проектирую базы данных и автоматизирую рутину. Люблю чистый код, понятную архитектуру и задачи, где нужно подумать.',
+        spec1k: 'СТАТУС',   spec1v: 'Доступен',
+        spec2k: 'ФОКУС',    spec2v: 'Backend · API',
+        spec3k: 'СТЕК',     spec3v: 'Python · FastAPI',
+        spec4k: 'ЛОКАЦИЯ',  spec4v: 'Россия',
+        skillsLabel: '03 / СТЕК',
+        skillsTitle: 'Мой стэк',
+        skillsNote:  'Инструменты, к которым обращаюсь каждый день.',
+        cat1: 'ЯЗЫКИ', cat2: 'ФРЕЙМВОРКИ', cat3: 'ДАННЫЕ', cat4: 'ИНФРА', cat5: 'СООБЩЕНИЯ',
+        projLabel:   '04 / ПРОЕКТЫ',
+        projTitle:   'Избранное',
+        proj1desc:   'REST API для футбольной статистики с асинхронными эндпоинтами и обновлением данных в реальном времени.',
+        proj2desc:   'Telegram-бот для мониторинга сервисов и автоматических уведомлений при сбоях.',
+        proj3desc:   'Автоматический парсер для сбора результатов матчей и статистики команд по расписанию.',
+        proj4desc:   'Standalone сервис аутентификации с JWT, refresh-токенами и ограничением запросов.',
+        expLabel:    '05 / ОПЫТ',
+        expTitle:    'Путь',
+        exp1period:  '2024 — сейчас',
+        exp1role:    'Python Backend Developer',
+        exp1org:     'Pet-проекты / фриланс',
+        exp1desc:    'Разработка REST API и Telegram-ботов, парсинг данных, развёртывание на VPS.',
+        exp2period:  '2023 — 2024',
+        exp2role:    'Самообучение',
+        exp2org:     'Python · Django · FastAPI',
+        exp2desc:    'Изучение backend-разработки: от основ Python до построения продакшн-сервисов.',
+        exp3period:  '2022 — 2023',
+        exp3role:    'Первые шаги',
+        exp3org:     'Скрипты и автоматизация',
+        exp3desc:    'Написание утилит, скриптов автоматизации и первых ботов.',
+        contactLabel: '06 / КОНТАКТЫ',
+        contactTitle: 'Поговорим',
+        contactNote:  'Открыт к стажировкам, junior-позициям и интересным проектам.',
+        contactCta:   'Написать письмо',
+        footerNote:   'СДЕЛАНО С КОДОМ И КОФЕ',
+      },
+      en: {
+        status:      'OPEN FOR WORK',
+        kicker:      '// BACKEND ENGINEER',
+        role2:       'Developer',
+        lead:        'I design and build the server side: APIs, task queues and data — all in Python.',
+        ctaWork:     'View work',
+        ctaContact:  'Get in touch',
+        meta:        'BASED IN RUSSIA',
+        caption:     'fig.01 — a tiny FastAPI service',
+        nav1: 'About', nav2: 'Stack', nav3: 'Projects', nav4: 'Experience', nav5: 'Contact',
+        aboutLabel:  '02 / ABOUT',
+        aboutHi:     'Hey!',
+        aboutLead:   "I'm Roman Kolchin — a backend developer focused on Python.",
+        aboutP1:     'I build reliable server-side systems: REST APIs, Telegram bots and data processing. Currently going deep on Django and FastAPI.',
+        aboutP2:     'I design databases and automate the routine. I love clean code, clear architecture and problems worth thinking about.',
+        spec1k: 'STATUS',   spec1v: 'Available',
+        spec2k: 'FOCUS',    spec2v: 'Backend · APIs',
+        spec3k: 'STACK',    spec3v: 'Python · FastAPI',
+        spec4k: 'BASED',    spec4v: 'Russia',
+        skillsLabel: '03 / STACK',
+        skillsTitle: 'My stack',
+        skillsNote:  'Tools I reach for every day.',
+        cat1: 'LANGUAGES', cat2: 'FRAMEWORKS', cat3: 'DATA', cat4: 'INFRA', cat5: 'MESSAGING',
+        projLabel:   '04 / PROJECTS',
+        projTitle:   'Selected work',
+        proj1desc:   'REST API for football statistics with async endpoints and live score updates.',
+        proj2desc:   'Telegram bot that watches services and fires alerts when something goes down.',
+        proj3desc:   'Automated scraper that pulls match results and team stats on a schedule.',
+        proj4desc:   'Standalone authentication service with JWT, refresh tokens and rate limiting.',
+        expLabel:    '05 / EXPERIENCE',
+        expTitle:    'The path',
+        exp1period:  '2024 — now',
+        exp1role:    'Python Backend Developer',
+        exp1org:     'Pet projects / freelance',
+        exp1desc:    'Building REST APIs and Telegram bots, scraping data, deploying to VPS.',
+        exp2period:  '2023 — 2024',
+        exp2role:    'Self-study',
+        exp2org:     'Python · Django · FastAPI',
+        exp2desc:    'Learning backend development: from Python basics to production-grade services.',
+        exp3period:  '2022 — 2023',
+        exp3role:    'First steps',
+        exp3org:     'Scripts and automation',
+        exp3desc:    'Writing utilities, automation scripts and first bots.',
+        contactLabel: '06 / CONTACT',
+        contactTitle: "Let's talk",
+        contactNote:  'Open to internships, junior roles and interesting projects.',
+        contactCta:   'Send an email',
+        footerNote:   'MADE WITH CODE & COFFEE',
+      },
+      ja: {
+        status:      '就職可能',
+        kicker:      '// バックエンドエンジニア',
+        role2:       '開発者',
+        lead:        'サーバーサイドを設計・構築します。API、タスクキュー、データ処理 — すべてPythonで。',
+        ctaWork:     '制作を見る',
+        ctaContact:  '連絡する',
+        meta:        '拠点：ロシア',
+        caption:     '図01 — 小さなFastAPIサービス',
+        nav1: 'プロフィール', nav2: 'スキル', nav3: 'プロジェクト', nav4: '経歴', nav5: 'コンタクト',
+        aboutLabel:  '02 / プロフィール',
+        aboutHi:     'こんにちは！',
+        aboutLead:   'ロマン・コルシンはロシアのPython専門バックエンド開発者です。',
+        aboutP1:     '信頼性の高いサーバーシステムを構築します：REST API、Telegramボット、データ処理。現在はDjangoとFastAPIを深く学んでいます。',
+        aboutP2:     'データベースを設計し、ルーティンを自動化します。クリーンなコード、明確なアーキテクチャ、考える価値のある課題が好きです。',
+        spec1k: 'ステータス', spec1v: '就職可能',
+        spec2k: 'フォーカス', spec2v: 'Backend · API',
+        spec3k: 'スタック',   spec3v: 'Python · FastAPI',
+        spec4k: '拠点',       spec4v: 'ロシア',
+        skillsLabel: '03 / スキル',
+        skillsTitle: '私のスタック',
+        skillsNote:  '毎日使っているツールです。',
+        cat1: '言語', cat2: 'フレームワーク', cat3: 'データ', cat4: 'インフラ', cat5: 'メッセージング',
+        projLabel:   '04 / プロジェクト',
+        projTitle:   '主な制作物',
+        proj1desc:   'サッカー統計のREST APIで、非同期エンドポイントとリアルタイムデータ更新が特徴。',
+        proj2desc:   'サービスを監視し、障害発生時に自動アラートを送信するTelegramボット。',
+        proj3desc:   'スケジュールに基づき試合結果とチーム統計を自動収集するスクレイパー。',
+        proj4desc:   'JWTとリフレッシュトークン、レート制限を備えたスタンドアロン認証サービス。',
+        expLabel:    '05 / 経歴',
+        expTitle:    '歩み',
+        exp1period:  '2024 — 現在',
+        exp1role:    'Pythonバックエンド開発者',
+        exp1org:     '個人開発 / フリーランス',
+        exp1desc:    'REST APIとTelegramボットの構築、データスクレイピング、VPSへのデプロイ。',
+        exp2period:  '2023 — 2024',
+        exp2role:    '独学',
+        exp2org:     'Python · Django · FastAPI',
+        exp2desc:    'Pythonの基礎から本番グレードのサービス構築まで、バックエンド開発を学習。',
+        exp3period:  '2022 — 2023',
+        exp3role:    '最初の一歩',
+        exp3org:     'スクリプトと自動化',
+        exp3desc:    'ユーティリティ、自動化スクリプト、最初のボットの作成。',
+        contactLabel: '06 / コンタクト',
+        contactTitle: '話しましょう',
+        contactNote:  'インターンシップ、ジュニアポジション、面白いプロジェクトを歓迎します。',
+        contactCta:   'メールを送る',
+        footerNote:   'コードとコーヒーで制作',
+      },
+    };
 
-    function type(el, text, done) {
-      let i = 0;
-      const t = setInterval(() => {
-        el.textContent = text.slice(0, ++i);
-        if (i === text.length) { clearInterval(t); setTimeout(done, 160); }
-      }, 38);
+    let lang = 'ru';
+
+    function applyLang(l) {
+      lang = l;
+      document.documentElement.lang = l === 'ja' ? 'ja' : l === 'en' ? 'en' : 'ru';
+      const t = T[l];
+      document.querySelectorAll('[data-t]').forEach(el => {
+        const key = el.getAttribute('data-t');
+        if (t[key] !== undefined) el.textContent = t[key];
+      });
+      document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.lang === l);
+      });
     }
 
-    function run(i) {
-      if (i >= steps.length) {
-        document.getElementById('result').style.display = 'block';
-        document.getElementById('r6').style.display = 'flex';
-        return;
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+      btn.addEventListener('click', () => applyLang(btn.dataset.lang));
+    });
+
+    // menu
+    const menuToggle = document.getElementById('menu-toggle');
+    const menuDropdown = document.getElementById('menu-dropdown');
+    menuToggle.addEventListener('click', () => {
+      const open = menuDropdown.hidden;
+      menuDropdown.hidden = !open;
+      menuToggle.textContent = open ? 'CLOSE' : 'MENU';
+      menuToggle.setAttribute('aria-expanded', open);
+    });
+    document.querySelectorAll('[data-menu-link]').forEach(a => {
+      a.addEventListener('click', () => {
+        menuDropdown.hidden = true;
+        menuToggle.textContent = 'MENU';
+        menuToggle.setAttribute('aria-expanded', false);
+      });
+    });
+    document.addEventListener('click', e => {
+      if (!menuToggle.contains(e.target) && !menuDropdown.contains(e.target)) {
+        menuDropdown.hidden = true;
+        menuToggle.textContent = 'MENU';
+        menuToggle.setAttribute('aria-expanded', false);
       }
-      const [elId, rowId, text] = steps[i];
-      if (rowId) document.getElementById(rowId).style.display = 'flex';
-      type(document.getElementById(elId), text, () => run(i + 1));
+    });
+
+    // clock
+    function initClock() {
+      const els = [document.getElementById('clock'), document.getElementById('clock2')];
+      const tick = () => {
+        let s;
+        try { s = new Date().toLocaleTimeString('en-GB', { timeZone: 'Europe/Moscow', hour12: false }); }
+        catch (_) { s = new Date().toLocaleTimeString('en-GB', { hour12: false }); }
+        els.forEach(el => { if (el) el.textContent = 'MSK ' + s; });
+      };
+      tick();
+      setInterval(tick, 1000);
     }
 
-    window.addEventListener('DOMContentLoaded', () => setTimeout(() => run(0), 300));
+    // typing terminal
+    function initTyping() {
+      const pre = document.getElementById('codepre');
+      if (!pre) return;
+      const C = { kw: '#7C5CFF', fn: '#ECEAE4', id: '#C9C6BE', pu: '#6E6B64', st: '#86C99A' };
+      const tokens = [
+        { t: 'from ',      c: C.kw }, { t: 'fastapi',    c: C.fn }, { t: ' import ', c: C.kw },
+        { t: 'FastAPI',    c: C.id }, { t: '\n\n',        c: C.pu },
+        { t: 'app',        c: C.id }, { t: ' = ',         c: C.pu }, { t: 'FastAPI',  c: C.id },
+        { t: '()\n\n',     c: C.pu },
+        { t: '@app',       c: C.kw }, { t: '.get(',       c: C.pu }, { t: '"/health"',c: C.st },
+        { t: ')\n',        c: C.pu },
+        { t: 'async def ', c: C.kw }, { t: 'health',      c: C.fn }, { t: '() -> ',   c: C.pu },
+        { t: 'dict',       c: C.id }, { t: ':\n',         c: C.pu },
+        { t: '    return ', c: C.kw }, { t: '{',          c: C.pu }, { t: '"status"', c: C.st },
+        { t: ': ',         c: C.pu }, { t: '"ok"',        c: C.st }, { t: '}',        c: C.pu },
+      ];
+      const chars = [];
+      tokens.forEach(tk => { for (const ch of tk.t) chars.push({ ch, c: tk.c }); });
+      const esc = ch => ch === '<' ? '&lt;' : ch === '>' ? '&gt;' : ch === '&' ? '&amp;' : ch;
+      const caret = '<span class="code-caret"></span>';
+      let i = 0;
+      const render = () => {
+        let html = '', cur = null;
+        for (let k = 0; k < i; k++) {
+          const o = chars[k];
+          if (o.c !== cur) { if (cur) html += '</span>'; html += `<span style="color:${o.c}">`; cur = o.c; }
+          html += esc(o.ch);
+        }
+        if (cur) html += '</span>';
+        pre.innerHTML = html + caret;
+      };
+      render();
+      setTimeout(() => {
+        const iv = setInterval(() => {
+          i++;
+          render();
+          if (i >= chars.length) clearInterval(iv);
+        }, 28);
+      }, 500);
+    }
+
+    // scroll progress
+    function initScrollProgress() {
+      const fill = document.getElementById('scroll-fill');
+      const update = () => {
+        const h = document.documentElement.scrollHeight - window.innerHeight;
+        fill.style.width = (h > 0 ? window.scrollY / h * 100 : 0) + '%';
+      };
+      window.addEventListener('scroll', update, { passive: true });
+    }
+
+    // scroll reveal
+    function initReveal() {
+      const els = document.querySelectorAll('[data-reveal]');
+      els.forEach(el => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(30px)';
+        el.style.transition = 'opacity 0.85s cubic-bezier(.2,.7,.2,1), transform 0.85s cubic-bezier(.2,.7,.2,1)';
+      });
+      const io = new IntersectionObserver(entries => {
+        entries.forEach(e => {
+          if (!e.isIntersecting) return;
+          const el = e.target;
+          const delay = parseInt(el.dataset.reveal, 10) || 0;
+          el.style.transitionDelay = delay + 'ms';
+          el.style.opacity = '1';
+          el.style.transform = 'none';
+          io.unobserve(el);
+        });
+      }, { threshold: 0.12, rootMargin: '0px 0px -6% 0px' });
+      els.forEach(el => io.observe(el));
+    }
+
+    // cursor + magnetic (fine pointers only)
+    function initCursor() {
+      if (!window.matchMedia('(pointer:fine)').matches) return;
+      const dot  = document.getElementById('cursor-dot');
+      const ring = document.getElementById('cursor-ring');
+      document.documentElement.style.cursor = 'none';
+      let mx = 0, my = 0, rx = 0, ry = 0, scale = 1, targetScale = 1, shown = false;
+      window.addEventListener('mousemove', e => {
+        mx = e.clientX; my = e.clientY;
+        if (!shown) { dot.style.display = ring.style.display = 'block'; shown = true; }
+        dot.style.transform = `translate(${mx}px,${my}px)`;
+      });
+      const loop = () => {
+        rx += (mx - rx) * 0.18;
+        ry += (my - ry) * 0.18;
+        scale += (targetScale - scale) * 0.18;
+        ring.style.transform = `translate(${rx}px,${ry}px) scale(${scale})`;
+        requestAnimationFrame(loop);
+      };
+      requestAnimationFrame(loop);
+      document.addEventListener('mouseover', e => {
+        if (e.target.closest('[data-cursor]')) targetScale = 1.9;
+      });
+      document.addEventListener('mouseout', e => {
+        if (e.target.closest('[data-cursor]')) targetScale = 1;
+      });
+      document.querySelectorAll('.magnetic').forEach(el => {
+        el.addEventListener('mousemove', e => {
+          const r = el.getBoundingClientRect();
+          el.style.transform = `translate(${(e.clientX - r.left - r.width / 2) * 0.3}px,${(e.clientY - r.top - r.height / 2) * 0.3}px)`;
+        });
+        el.addEventListener('mouseleave', () => { el.style.transform = ''; });
+      });
+    }
+
+    function initMarquee() {
+      const ticker = document.getElementById('ticker');
+      if (!ticker) return;
+      const band = ticker.querySelector('.ticker-band');
+      if (!band) return;
+      requestAnimationFrame(() => {
+        const w = band.offsetWidth;
+        if (!w) return;
+        const copies = Math.max(2, Math.ceil(window.innerWidth / w) + 1);
+        for (let i = 1; i < copies; i++) ticker.appendChild(band.cloneNode(true));
+        const kf = document.createElement('style');
+        kf.textContent = `@keyframes ticker-run { to { transform: translateX(-${w}px); } }`;
+        document.head.appendChild(kf);
+        ticker.style.animation = `ticker-run ${(w / 70).toFixed(2)}s linear infinite`;
+      });
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      applyLang('ru');
+      initClock();
+      initTyping();
+      initScrollProgress();
+      initReveal();
+      initCursor();
+      initMarquee();
+    });
   </script>
 
 </body>
