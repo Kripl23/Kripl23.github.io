@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Роман Колчин — Python-разработчик</title>
+<meta name="description" content="Личный сайт Романа Колчина, Python-разработчика. Backend: FastAPI, Django, aiogram, сбор и обработка данных, Linux. Оформлен как рабочий стол Windows 2000.">
+<meta name="author" content="Roman Kolchin">
+<meta name="theme-color" content="#3a6ea5">
+
+<meta property="og:type" content="website">
+<meta property="og:title" content="Роман Колчин — Python-разработчик">
+<meta property="og:description" content="Backend на Python: FastAPI, Django, aiogram, работа с данными и Linux. Сайт оформлен как рабочий стол Windows 2000.">
+<meta property="og:image" content="https://kripl23.github.io/img/icon.png">
+<meta property="og:url" content="https://kripl23.github.io/">
+<meta name="twitter:card" content="summary">
+
+<link rel="icon" href="img/icon.png">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- Инверсия цвета иконки при выделении на рабочем столе -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <filter id="icon-select">
+    <feColorMatrix type="matrix" values="0.6 0 0 0 0.08  0 0.6 0 0 0.12  0 0 0.6 0 0.35  0 0 0 1 0"/>
+  </filter>
+</svg>
+
+<!-- ══ Загрузка системы ═════════════════════════════════════════════════ -->
+<div id="boot">
+
+  <section id="bios" class="on">
+    <pre></pre>
+    <p id="bios-hint" style="margin-top:2em;color:#6f6f6f"></p>
+  </section>
+
+  <section id="splash">
+    <div class="splash-inner">
+      <p class="splash-logo">Kolchin Systems</p>
+      <p class="splash-title">Windows 2000</p>
+      <p class="splash-edition" id="splash-edition"></p>
+      <div class="splash-bar"><i></i></div>
+      <p class="splash-note" id="splash-note"></p>
+    </div>
+    <p class="splash-foot" id="splash-foot"></p>
+  </section>
+
+  <section id="logon">
+    <div class="logon-box raised" id="logon-box"></div>
+  </section>
+
+  <section id="off">
+    <div class="off-inner">
+      <p></p>
+      <button></button>
+    </div>
+  </section>
+
+</div>
+
+<!-- ══ Рабочий стол ═════════════════════════════════════════════════════ -->
+<div id="desktop">
+  <div id="desktop-icons"></div>
+</div>
+
+<!-- ══ Таскбар ══════════════════════════════════════════════════════════ -->
+<div id="taskbar">
+  <button id="start-btn" aria-expanded="false" aria-controls="start-menu">
+    <img src="img/icons/flag.svg" alt="" width="16" height="16">
+    <span>Пуск</span>
+  </button>
+  <div class="tb-sep" aria-hidden="true"></div>
+  <div id="tasklist"></div>
+  <div id="tray">
+    <button id="lang-indicator" title="Сменить язык / Change language / 言語切替">RU</button>
+    <span id="tray-clock"></span>
+  </div>
+</div>
+
+<div id="start-menu" hidden>
+  <div id="start-banner"></div>
+  <div id="start-items"></div>
+</div>
+
+<!-- ══ Запасной вариант без JavaScript ══════════════════════════════════ -->
+<noscript>
+  <style>
+    #boot, #desktop, #taskbar, #start-menu { display: none !important; }
+    body { overflow: auto; background: #d4d0c8; }
+    .fallback { max-width: 680px; margin: 0 auto; padding: 24px 18px 60px; font-size: 14px; line-height: 1.6; }
+    .fallback h1 { font-size: 22px; margin: 0 0 4px; }
+    .fallback h2 { font-size: 15px; margin: 26px 0 6px; }
+    .fallback ul { padding-left: 20px; }
+  </style>
+  <div class="fallback">
+    <h1>Роман Колчин</h1>
+    <p>Python-разработчик · Россия · <a href="mailto:krippi22322@gmail.com">krippi22322@gmail.com</a></p>
+    <p>Этот сайт оформлен как рабочий стол Windows 2000 и для этого ему нужен JavaScript.
+       Ниже — то же содержимое обычным текстом.</p>
+
+    <h2>Опыт</h2>
+    <p><b>Февраль 2024 — настоящее время · Python-разработчик · РуСтат</b><br>
+       Спортивные данные. Backend продуктовых сервисов: REST API, сбор и обработка данных
+       из внешних источников, телеграм-боты для внутренних задач, развёртывание и
+       сопровождение сервисов на Linux. Код коммерческих проектов не публикуется.</p>
+
+    <h2>Технологии</h2>
+    <ul>
+      <li><b>Python</b> — основной язык с 2021 года: ООП, asyncio, типизация, сервисы с нуля.</li>
+      <li><b>FastAPI</b> — асинхронные REST API, Pydantic, фоновые задачи, аутентификация.</li>
+      <li><b>Django</b> — серверные приложения и админка, ORM и миграции, DRF.</li>
+      <li><b>aiogram</b> — телеграм-боты: FSM, инлайн-клавиатуры, вебхуки, рассылки.</li>
+      <li><b>requests · BeautifulSoup · lxml</b> — сбор данных, прокси и ретраи, CSS/XPath.</li>
+      <li><b>Linux (Ubuntu)</b> — развёртывание и сопровождение сервисов, cron, логи.</li>
+      <li><b>Git</b> — ветки и слияния, ревью через merge request, разбор истории.</li>
+      <li><b>supervisor</b> — управление долгоживущими процессами, автоперезапуск, логи.</li>
+      <li><b>pyrogram</b> — Telegram на уровне пользовательского клиента (MTProto).</li>
+      <li><b>Keycloak</b> — OAuth2 и OIDC, realm и клиенты, роли, проверка токенов.</li>
+      <li><b>HTTP</b> — методы и семантика REST, коды состояния, заголовки, кэширование.</li>
+      <li><b>JavaScript</b> — редко, по необходимости на фронте.</li>
+    </ul>
+
+    <h2>Контакты</h2>
+    <ul>
+      <li><a href="mailto:krippi22322@gmail.com">krippi22322@gmail.com</a></li>
+      <li><a href="https://github.com/Kripl23">github.com/Kripl23</a></li>
+      <li><a href="https://www.linkedin.com/in/roman-kolchin/">linkedin.com/in/roman-kolchin</a></li>
+    </ul>
+  </div>
+</noscript>
+
+<script src="js/content.js"></script>
+<script src="js/wm.js"></script>
+<script src="js/app.js"></script>
+<script src="js/boot.js"></script>
+</body>
+</html>

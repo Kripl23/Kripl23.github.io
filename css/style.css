@@ -1,0 +1,929 @@
+/* ==========================================================================
+   Roman Kolchin — personal site
+   Windows 2000 shell. Vanilla CSS, no build step, no dependencies.
+
+   Слои стилей:
+     1. Токены и сброс
+     2. Рамки (объёмные/вдавленные) — фундамент всей эстетики
+     3. Рабочий стол и обои
+     4. Иконки рабочего стола
+     5. Окна
+     6. Элементы управления (кнопки, поля, списки, вкладки, деревья)
+     7. Таскбар, «Пуск», трей
+     8. Загрузка системы (BIOS → сплэш → вход)
+     9. Содержимое конкретных окон
+    10. Мобильный режим
+   ========================================================================== */
+
+/* ── 1. Токены и сброс ──────────────────────────────────────────────────── */
+
+:root {
+  /* Палитра Windows 2000 (оригинальная схема «Обычная») */
+  --face:          #d4d0c8;  /* лицевая поверхность окон и кнопок */
+  --face-light:    #dfdfdf;
+  --hilite:        #ffffff;  /* верхняя-левая грань объёма */
+  --shadow:        #808080;  /* нижняя-правая грань */
+  --shadow-dark:   #404040;  /* внешняя тень */
+  --field:         #ffffff;  /* фон полей ввода и списков */
+  --text:          #000000;
+  --text-disabled: #808080;
+
+  --title-a1:      #0a246a;  /* градиент активного заголовка */
+  --title-a2:      #a6caf0;
+  --title-i1:      #808080;  /* неактивный заголовок */
+  --title-i2:      #b5b5b5;
+  --title-text:    #ffffff;
+
+  --select:        #0a246a;  /* выделение в списках */
+  --select-text:   #ffffff;
+
+  --desktop:       #3a6ea5;  /* фирменный синий рабочего стола */
+  --desktop-2:     #1d4f7c;
+
+  --link:          #0000ee;
+
+  /* Шрифты эпохи. Tahoma — системный шрифт интерфейса Windows 2000.
+     MS UI Gothic / Meiryo нужны для японской локали. */
+  --ui:   Tahoma, "MS UI Gothic", Meiryo, "Noto Sans JP", Verdana, "DejaVu Sans", sans-serif;
+  --mono: "Lucida Console", "Courier New", "DejaVu Sans Mono", monospace;
+
+  --chrome-size: 11px;  /* заголовки, меню, таскбар */
+  --body-size:   12px;  /* читаемый текст внутри окон */
+
+  --taskbar-h: 28px;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;              /* десктоп не скроллится, скроллятся окна */
+  font-family: var(--ui);
+  font-size: var(--chrome-size);
+  color: var(--text);
+  background: #000;
+  -webkit-font-smoothing: none;  /* пиксельная резкость там, где это возможно */
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Курсор эпохи: системная стрелка вместо «руки» на всех элементах интерфейса.
+   Указатель-рука остаётся только у настоящих внешних ссылок. */
+body, button, .desktop-icon, .win-title, .menu-item { cursor: default; }
+a[href^="http"], a[href^="mailto"] { cursor: pointer; }
+
+/* Ничего в интерфейсе не выделяется мышью — как в настоящей оболочке.
+   Текстовое содержимое окон выделение разрешает (класс .selectable). */
+body { user-select: none; -webkit-user-select: none; }
+.selectable { user-select: text; -webkit-user-select: text; cursor: text; }
+
+img { max-width: 100%; image-rendering: pixelated; }
+[hidden] { display: none !important; }
+
+/* Классические полосы прокрутки */
+* { scrollbar-color: var(--face) var(--face-light); scrollbar-width: auto; }
+::-webkit-scrollbar { width: 16px; height: 16px; }
+::-webkit-scrollbar-track {
+  background: #efefef;
+  background-image: linear-gradient(45deg, #fff 25%, transparent 25%, transparent 75%, #fff 75%),
+                    linear-gradient(45deg, #fff 25%, transparent 25%, transparent 75%, #fff 75%);
+  background-size: 2px 2px;
+  background-position: 0 0, 1px 1px;
+  background-color: #d4d0c8;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--face);
+  border: 1px solid;
+  border-color: var(--hilite) var(--shadow-dark) var(--shadow-dark) var(--hilite);
+  box-shadow: inset 1px 1px 0 var(--face-light), inset -1px -1px 0 var(--shadow);
+}
+::-webkit-scrollbar-corner { background: var(--face); }
+
+/* ── 2. Рамки ───────────────────────────────────────────────────────────── */
+/* Весь объём Windows 2000 держится на двух рамках: выпуклой и вдавленной.
+   Внешняя граница рисуется border'ом, внутренняя — двумя inset-тенями. */
+
+.raised {
+  border: 1px solid;
+  border-color: var(--hilite) var(--shadow-dark) var(--shadow-dark) var(--hilite);
+  box-shadow: inset 1px 1px 0 var(--face-light), inset -1px -1px 0 var(--shadow);
+  background: var(--face);
+}
+
+.sunken {
+  border: 1px solid;
+  border-color: var(--shadow) var(--hilite) var(--hilite) var(--shadow);
+  box-shadow: inset 1px 1px 0 var(--shadow-dark), inset -1px -1px 0 var(--face-light);
+  background: var(--field);
+}
+
+/* Тонкая вдавленная рамка — разделители, группы */
+.sunken-thin {
+  border: 1px solid;
+  border-color: var(--shadow) var(--hilite) var(--hilite) var(--shadow);
+}
+
+/* ── 3. Рабочий стол ────────────────────────────────────────────────────── */
+
+#desktop {
+  position: fixed;
+  inset: 0;
+  bottom: var(--taskbar-h);
+  background: var(--desktop);
+  background-image: radial-gradient(ellipse at 50% 40%, #4a7fb5 0%, var(--desktop) 45%, var(--desktop-2) 100%);
+  overflow: hidden;
+}
+
+/* Логотип-подложка в углу рабочего стола */
+#desktop::after {
+  content: "";
+  position: absolute;
+  right: 18px;
+  bottom: 14px;
+  width: 190px;
+  height: 46px;
+  background: url("../img/icons/logo-corner.svg") right bottom / contain no-repeat;
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+/* Рамка выделения при протяжке мышью по пустому месту */
+#rubber-band {
+  position: absolute;
+  border: 1px dotted #fff;
+  background: rgba(255, 255, 255, 0.12);
+  pointer-events: none;
+  z-index: 5;
+}
+
+/* ── 4. Иконки рабочего стола ───────────────────────────────────────────── */
+
+#desktop-icons {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  gap: 2px;
+  max-height: calc(100% - 16px);
+  z-index: 10;
+}
+
+.desktop-icon {
+  width: 80px;
+  min-width: 0;
+  height: auto;
+  padding: 4px 2px 5px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  border: 1px dotted transparent;
+  background: none;
+  box-shadow: none;
+  font: inherit;
+  color: #fff;
+  text-align: center;
+  text-decoration: none;
+}
+
+.desktop-icon img { width: 32px; height: 32px; }
+
+.desktop-icon span {
+  padding: 1px 3px;
+  line-height: 1.25;
+  /* Подпись на обоях: тень вместо плашки, пока иконка не выделена */
+  text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.75);
+  overflow-wrap: break-word;
+}
+
+.desktop-icon.selected span {
+  background: var(--select);
+  text-shadow: none;
+}
+.desktop-icon.selected { border-color: #fff; }
+.desktop-icon.selected img { filter: url("#icon-select"); }
+
+.desktop-icon:focus-visible { border-color: #fff; outline: none; }
+
+/* Стрелка ярлыка для внешних ссылок */
+.desktop-icon.shortcut { position: relative; }
+.desktop-icon.shortcut::before {
+  content: "";
+  position: absolute;
+  left: 22px;
+  top: 26px;
+  width: 11px;
+  height: 11px;
+  background: url("../img/icons/shortcut-arrow.svg") center / contain no-repeat;
+}
+
+/* ── 5. Окна ────────────────────────────────────────────────────────────── */
+
+.win {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  min-width: 240px;
+  min-height: 120px;
+  padding: 3px;
+  background: var(--face);
+  border: 1px solid;
+  border-color: var(--hilite) var(--shadow-dark) var(--shadow-dark) var(--hilite);
+  box-shadow: inset 1px 1px 0 var(--face-light), inset -1px -1px 0 var(--shadow);
+  z-index: 100;
+}
+
+.win.minimized { display: none; }
+
+.win.maximized {
+  inset: 0 !important;
+  width: auto !important;
+  height: auto !important;
+}
+
+/* Заголовок */
+.win-title {
+  flex: none;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0 2px 0 3px;
+  background: linear-gradient(90deg, var(--title-a1), var(--title-a2));
+  color: var(--title-text);
+  font-weight: 700;
+  font-size: var(--chrome-size);
+  touch-action: none;
+}
+
+.win:not(.active) .win-title {
+  background: linear-gradient(90deg, var(--title-i1), var(--title-i2));
+  color: #d4d0c8;
+}
+
+.win-title img { width: 16px; height: 16px; flex: none; }
+
+.win-caption {
+  flex: 1;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.win-buttons { display: flex; gap: 2px; flex: none; }
+
+/* Кнопки заголовка. Глифы нарисованы псевдоэлементами, а не шрифтом Marlett:
+   Marlett есть не везде, а прямоугольники выглядят одинаково в любой ОС. */
+.tb-btn {
+  position: relative;
+  min-width: 0;
+  width: 16px;
+  height: 14px;
+  padding: 0;
+  font: inherit;
+  background: var(--face);
+  border: 1px solid;
+  border-color: var(--hilite) var(--shadow-dark) var(--shadow-dark) var(--hilite);
+  box-shadow: inset 1px 1px 0 var(--face-light), inset -1px -1px 0 var(--shadow);
+}
+.tb-btn:active {
+  border-color: var(--shadow-dark) var(--hilite) var(--hilite) var(--shadow-dark);
+  box-shadow: inset 1px 1px 0 var(--shadow);
+}
+.tb-btn:active::before, .tb-btn:active::after { transform: translate(1px, 1px); }
+.tb-btn::before, .tb-btn::after { content: ""; position: absolute; background: #000; }
+
+/* свернуть — полоска внизу */
+.tb-btn[data-act="min"]::before { left: 3px; bottom: 2px; width: 7px; height: 2px; }
+/* развернуть — рамка с утолщённым верхом */
+.tb-btn[data-act="max"]::before {
+  left: 3px; top: 2px; width: 9px; height: 8px;
+  background: none; border: 1px solid #000; border-top-width: 2px;
+}
+/* восстановить — две наложенные рамки */
+.win.maximized .tb-btn[data-act="max"]::before {
+  left: 5px; top: 2px; width: 7px; height: 6px;
+}
+.win.maximized .tb-btn[data-act="max"]::after {
+  left: 3px; top: 5px; width: 7px; height: 6px;
+  background: var(--face); border: 1px solid #000; border-top-width: 2px;
+}
+/* закрыть — крест из двух линий */
+.tb-btn[data-act="close"]::before,
+.tb-btn[data-act="close"]::after {
+  left: 3px; top: 5px; width: 9px; height: 2px;
+}
+.tb-btn[data-act="close"]::before { transform: rotate(45deg); }
+.tb-btn[data-act="close"]::after  { transform: rotate(-45deg); }
+.tb-btn[data-act="close"]:active::before { transform: translate(1px, 1px) rotate(45deg); }
+.tb-btn[data-act="close"]:active::after  { transform: translate(1px, 1px) rotate(-45deg); }
+
+.tb-btn[disabled] { opacity: 0.5; }
+
+/* Строка меню */
+.win-menubar {
+  flex: none;
+  display: flex;
+  gap: 0;
+  padding: 1px 0 2px;
+  font-size: var(--chrome-size);
+}
+.win-menubar > span {
+  padding: 2px 6px;
+}
+.win-menubar > span:hover { background: var(--select); color: var(--select-text); }
+
+/* Тело окна */
+.win-body {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  padding: 8px;
+  font-size: var(--body-size);
+  line-height: 1.45;
+}
+.win-body.flush { padding: 0; overflow: hidden; }
+/* Содержимое само управляет своей прокруткой и занимает всю высоту окна */
+.win-body.fill { overflow: hidden; display: flex; flex-direction: column; }
+.win-body.fill > * { flex: 1; min-height: 0; }
+
+/* Строка состояния */
+.win-status {
+  flex: none;
+  display: flex;
+  gap: 2px;
+  margin-top: 3px;
+  font-size: var(--chrome-size);
+}
+.win-status > span {
+  padding: 2px 5px;
+  border: 1px solid;
+  border-color: var(--shadow) var(--hilite) var(--hilite) var(--shadow);
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.win-status > span:first-child { flex: 1; }
+
+/* Уголок изменения размера */
+.win-resize {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 16px;
+  height: 16px;
+  cursor: nwse-resize;
+  touch-action: none;
+}
+.win.maximized .win-resize { display: none; }
+
+/* Диалоги: без строки меню, кнопки действий снизу */
+.dialog-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 6px;
+  margin-top: 12px;
+}
+
+/* ── 6. Элементы управления ─────────────────────────────────────────────── */
+
+button, .btn {
+  min-width: 75px;
+  height: 23px;
+  padding: 0 10px;
+  font-family: var(--ui);
+  font-size: var(--chrome-size);
+  color: var(--text);
+  background: var(--face);
+  border: 1px solid;
+  border-color: var(--hilite) var(--shadow-dark) var(--shadow-dark) var(--hilite);
+  box-shadow: inset 1px 1px 0 var(--face-light), inset -1px -1px 0 var(--shadow);
+}
+button:active:not([disabled]):not(.desktop-icon):not(.menu-item), .btn:active {
+  padding: 1px 9px 0 11px;
+  border-color: var(--shadow-dark) var(--hilite) var(--hilite) var(--shadow-dark);
+  box-shadow: inset 1px 1px 0 var(--shadow);
+}
+button:focus-visible { outline: 1px dotted #000; outline-offset: -4px; }
+button[disabled] {
+  color: var(--text-disabled);
+  text-shadow: 1px 1px 0 var(--hilite);
+}
+button.default { border-width: 1px; outline: 1px solid #000; outline-offset: 0; }
+
+/* Поля и списки */
+.field, input[type="text"], input[type="password"], textarea {
+  padding: 3px 4px;
+  font-family: var(--ui);
+  font-size: var(--body-size);
+  color: var(--text);
+  background: var(--field);
+  border: 1px solid;
+  border-color: var(--shadow) var(--hilite) var(--hilite) var(--shadow);
+  box-shadow: inset 1px 1px 0 var(--shadow-dark), inset -1px -1px 0 var(--face-light);
+}
+input:focus, textarea:focus { outline: none; }
+textarea { font-family: var(--mono); resize: none; }
+
+/* Группа с рамкой и подписью */
+fieldset.group {
+  margin: 0 0 10px;
+  padding: 10px 10px 12px;
+  border: 1px solid var(--shadow);
+  box-shadow: 1px 1px 0 var(--hilite), inset -1px -1px 0 var(--hilite);
+}
+fieldset.group > legend { padding: 0 4px; font-size: var(--chrome-size); }
+
+/* Вкладки */
+.tabs { display: flex; gap: 1px; padding-left: 2px; margin-bottom: -1px; position: relative; z-index: 2; }
+.tab {
+  min-width: 0;
+  height: 21px;
+  padding: 3px 11px 2px;
+  font-size: var(--chrome-size);
+  background: var(--face);
+  border: 1px solid;
+  border-color: var(--hilite) var(--shadow-dark) transparent var(--hilite);
+  border-radius: 3px 3px 0 0;
+  box-shadow: inset -1px 0 0 var(--shadow);
+}
+.tab[aria-selected="true"] {
+  margin: -2px -2px 0;
+  padding: 4px 13px 4px;
+  z-index: 3;
+}
+.tab-panel {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  padding: 12px;
+  border: 1px solid;
+  border-color: var(--hilite) var(--shadow-dark) var(--shadow-dark) var(--hilite);
+  box-shadow: inset 1px 1px 0 var(--face-light), inset -1px -1px 0 var(--shadow);
+  position: relative;
+  z-index: 1;
+}
+
+/* Список в стиле «Таблица» проводника */
+.listview { background: var(--field); width: 100%; border-collapse: collapse; font-size: var(--body-size); }
+.listview thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  padding: 3px 6px;
+  text-align: left;
+  font-weight: 400;
+  font-size: var(--chrome-size);
+  background: var(--face);
+  border: 1px solid;
+  border-color: var(--hilite) var(--shadow) var(--shadow) var(--hilite);
+}
+.listview tbody td { padding: 2px 6px; white-space: nowrap; }
+.listview tbody tr.selected td { background: var(--select); color: var(--select-text); }
+.listview tbody td.icon-cell { display: flex; align-items: center; gap: 5px; }
+.listview img { width: 16px; height: 16px; }
+
+/* Дерево */
+.tree { font-size: var(--body-size); }
+.tree ul { list-style: none; margin: 0; padding-left: 18px; }
+.tree li { line-height: 1.6; }
+.tree .node { display: inline-flex; align-items: center; gap: 4px; padding: 0 3px; }
+.tree .node.selected { background: var(--select); color: var(--select-text); }
+
+/* Индикатор выполнения */
+.progress {
+  height: 16px;
+  padding: 1px;
+  background: var(--face);
+  border: 1px solid;
+  border-color: var(--shadow) var(--hilite) var(--hilite) var(--shadow);
+  box-shadow: inset 1px 1px 0 var(--shadow-dark);
+}
+.progress > i { display: block; height: 100%; background: var(--title-a1); width: 0; }
+
+/* Ссылки */
+.win-body a { color: var(--link); }
+.win-body a:visited { color: #551a8b; }
+
+/* ── 7. Таскбар и меню «Пуск» ───────────────────────────────────────────── */
+
+#taskbar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: var(--taskbar-h);
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  padding: 2px 2px 2px 2px;
+  padding-bottom: calc(2px + env(safe-area-inset-bottom, 0px));
+  height: calc(var(--taskbar-h) + env(safe-area-inset-bottom, 0px));
+  background: var(--face);
+  border-top: 1px solid var(--hilite);
+  box-shadow: inset 0 1px 0 var(--face-light);
+  z-index: 9000;
+}
+
+#start-btn {
+  min-width: 0;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0 6px 0 3px;
+  font-weight: 700;
+  flex: none;
+}
+#start-btn img { width: 16px; height: 16px; }
+#start-btn[aria-expanded="true"] {
+  padding: 1px 5px 0 4px;
+  border-color: var(--shadow-dark) var(--hilite) var(--hilite) var(--shadow-dark);
+  box-shadow: inset 1px 1px 0 var(--shadow);
+}
+
+.tb-sep {
+  flex: none;
+  width: 3px;
+  height: 20px;
+  border-left: 1px solid var(--shadow);
+  border-right: 1px solid var(--hilite);
+}
+
+#tasklist {
+  flex: 1;
+  display: flex;
+  gap: 3px;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.task-btn {
+  min-width: 0;
+  flex: 0 1 160px;
+  min-width: 40px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0 6px;
+  overflow: hidden;
+  text-align: left;
+}
+.task-btn img { width: 16px; height: 16px; flex: none; }
+.task-btn span { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.task-btn.active {
+  border-color: var(--shadow-dark) var(--hilite) var(--hilite) var(--shadow-dark);
+  box-shadow: inset 1px 1px 0 var(--shadow);
+  font-weight: 700;
+  /* Точечная штриховка вдавленной кнопки активного окна */
+  background-image:
+    linear-gradient(45deg, var(--hilite) 25%, transparent 25%, transparent 75%, var(--hilite) 75%),
+    linear-gradient(45deg, var(--hilite) 25%, transparent 25%, transparent 75%, var(--hilite) 75%);
+  background-size: 2px 2px;
+  background-position: 0 0, 1px 1px;
+}
+
+#tray {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 22px;
+  padding: 0 6px;
+  border: 1px solid;
+  border-color: var(--shadow) var(--hilite) var(--hilite) var(--shadow);
+}
+
+#lang-indicator {
+  min-width: 0;
+  height: 16px;
+  padding: 0 4px;
+  font-size: var(--chrome-size);
+  font-weight: 700;
+  background: var(--face);
+  border: 1px solid;
+  border-color: var(--hilite) var(--shadow) var(--shadow) var(--hilite);
+  box-shadow: none;
+}
+
+#tray-clock { font-size: var(--chrome-size); min-width: 42px; text-align: center; }
+
+/* Меню «Пуск» */
+#start-menu {
+  position: fixed;
+  left: 2px;
+  bottom: calc(var(--taskbar-h) + env(safe-area-inset-bottom, 0px));
+  display: flex;
+  background: var(--face);
+  border: 1px solid;
+  border-color: var(--hilite) var(--shadow-dark) var(--shadow-dark) var(--hilite);
+  box-shadow: inset 1px 1px 0 var(--face-light), inset -1px -1px 0 var(--shadow);
+  z-index: 9500;
+}
+
+/* Вертикальный баннер слева — фирменная деталь меню Windows 2000 */
+#start-banner {
+  flex: none;
+  width: 22px;
+  background: linear-gradient(0deg, var(--title-a1), #1a3f8f);
+  color: #fff;
+  position: relative;
+}
+#start-banner span {
+  position: absolute;
+  bottom: 8px;
+  left: 50%;
+  transform: translateX(-50%) rotate(180deg);
+  writing-mode: vertical-rl;
+  white-space: nowrap;
+  font-size: 13px;
+  letter-spacing: 0.5px;
+}
+#start-banner b { font-weight: 700; }
+
+#start-items {
+  flex: 1;
+  min-width: 190px;
+  padding: 2px;
+  display: flex;
+  flex-direction: column;
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  min-width: 0;
+  height: auto;
+  padding: 4px 18px 4px 5px;
+  font-size: var(--body-size);
+  text-align: left;
+  background: none;
+  border: none;
+  box-shadow: none;
+  position: relative;
+}
+.menu-item:active { padding: 4px 18px 4px 5px; box-shadow: none; }
+.menu-item img { width: 24px; height: 24px; flex: none; }
+.menu-item.small img { width: 16px; height: 16px; }
+.menu-item:hover, .menu-item.open { background: var(--select); color: var(--select-text); }
+.menu-item[data-submenu]::after {
+  content: "";
+  position: absolute;
+  right: 6px;
+  top: 50%;
+  margin-top: -4px;
+  border: 4px solid transparent;
+  border-left-color: currentColor;
+  border-right-width: 0;
+}
+.menu-sep { height: 1px; margin: 3px 2px; border-top: 1px solid var(--shadow); border-bottom: 1px solid var(--hilite); }
+
+.submenu {
+  position: fixed;
+  min-width: 170px;
+  padding: 2px;
+  background: var(--face);
+  border: 1px solid;
+  border-color: var(--hilite) var(--shadow-dark) var(--shadow-dark) var(--hilite);
+  box-shadow: inset 1px 1px 0 var(--face-light), inset -1px -1px 0 var(--shadow);
+  z-index: 9600;
+}
+
+/* Контекстное меню рабочего стола */
+#context-menu {
+  position: fixed;
+  min-width: 150px;
+  padding: 2px;
+  background: var(--face);
+  border: 1px solid;
+  border-color: var(--hilite) var(--shadow-dark) var(--shadow-dark) var(--hilite);
+  box-shadow: inset 1px 1px 0 var(--face-light), inset -1px -1px 0 var(--shadow);
+  z-index: 9600;
+}
+
+/* ── 8. Загрузка системы ────────────────────────────────────────────────── */
+
+#boot {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  background: #000;
+}
+#boot > section { position: absolute; inset: 0; display: none; }
+#boot > section.on { display: block; }
+
+/* Экран BIOS */
+#bios {
+  padding: 24px 28px;
+  padding-top: calc(24px + env(safe-area-inset-top, 0px));
+  color: #c0c0c0;
+  background: #000;
+  font-family: var(--mono);
+  font-size: 14px;
+  line-height: 1.5;
+  overflow: hidden;
+}
+#bios .amber { color: #d8d8d8; }
+#bios pre { margin: 0; white-space: pre-wrap; font: inherit; }
+#bios .caret { display: inline-block; width: 8px; height: 14px; background: #c0c0c0; vertical-align: -2px; animation: blink 1s steps(1) infinite; }
+@keyframes blink { 50% { opacity: 0; } }
+
+/* Сплэш загрузки */
+#splash {
+  background: #000;
+  color: #fff;
+  display: none;
+  place-items: center;
+}
+#boot > section#splash.on { display: grid; }
+.splash-inner { text-align: center; width: min(420px, 82vw); }
+.splash-logo { font-size: 13px; letter-spacing: 3px; text-transform: uppercase; color: #9aa7bf; }
+.splash-title { font-size: clamp(28px, 7vw, 44px); font-weight: 700; margin: 6px 0 4px; letter-spacing: -0.5px; }
+.splash-edition { font-size: 15px; color: #c9d3e6; margin-bottom: 34px; }
+.splash-bar {
+  height: 14px;
+  padding: 2px;
+  border: 1px solid #5a6a86;
+  overflow: hidden;
+}
+/* Бегущие блоки, как в оригинальной полосе загрузки */
+.splash-bar > i {
+  display: block;
+  height: 100%;
+  width: 60px;
+  background: repeating-linear-gradient(90deg, #4f7fd0 0 10px, transparent 10px 14px);
+  animation: splash-run 2s linear infinite;
+}
+@keyframes splash-run { from { transform: translateX(-70px); } to { transform: translateX(420px); } }
+.splash-note { margin-top: 30px; font-size: 11px; color: #8f9bb3; }
+.splash-foot { position: absolute; right: 20px; bottom: 16px; font-size: 11px; color: #6f7b93; }
+
+/* Экран входа */
+#logon {
+  background: #3a6ea5;
+  background-image: radial-gradient(ellipse at 50% 35%, #4a7fb5 0%, #3a6ea5 45%, #1d4f7c 100%);
+  display: none;
+  place-items: center;
+}
+#boot > section#logon.on { display: grid; }
+.logon-box { width: min(420px, 90vw); padding: 3px; }
+.logon-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px 16px;
+}
+.logon-head img { width: 48px; height: 48px; }
+.logon-head b { font-size: 15px; }
+.logon-head p { margin: 2px 0 0; font-size: var(--body-size); }
+.logon-fields { padding: 0 16px 14px; }
+.logon-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+.logon-row label { width: 90px; font-size: var(--body-size); text-align: right; }
+.logon-row input { flex: 1; }
+.logon-actions { display: flex; justify-content: center; gap: 8px; padding: 0 16px 16px; }
+
+/* ── 9. Содержимое окон ─────────────────────────────────────────────────── */
+
+.win-body h1, .win-body h2, .win-body h3 { margin: 0 0 6px; font-size: var(--body-size); }
+.win-body p { margin: 0 0 8px; }
+.win-body p:last-child { margin-bottom: 0; }
+
+/* Шапка-баннер внутри окна (как в мастерах установки) */
+.pane-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 12px;
+  background: var(--field);
+  border-bottom: 1px solid var(--shadow);
+}
+.pane-head img { width: 32px; height: 32px; flex: none; }
+.pane-head b { display: block; margin-bottom: 2px; }
+
+/* --- Установка и удаление программ --- */
+#pane-stack { display: flex; flex-direction: column; height: 100%; }
+.stack-list { flex: 1; min-height: 0; overflow: auto; margin: 8px; background: var(--field); }
+.stack-item { border-bottom: 1px solid #e8e8e8; }
+.stack-row {
+  display: grid;
+  grid-template-columns: 24px 1fr auto;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 8px;
+  font-size: var(--body-size);
+}
+.stack-row img { width: 16px; height: 16px; }
+.stack-item.open > .stack-row { background: var(--select); color: var(--select-text); }
+.stack-freq { font-size: var(--chrome-size); color: var(--text-disabled); white-space: nowrap; }
+.stack-item.open .stack-freq { color: #c8d4ee; }
+.stack-detail { display: none; padding: 8px 10px 12px 40px; background: #eef3fb; font-size: var(--body-size); }
+.stack-item.open .stack-detail { display: block; }
+.stack-meta {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 2px 12px;
+  margin: 8px 0 10px;
+  font-size: var(--chrome-size);
+}
+.stack-meta dt { color: #444; }
+.stack-meta dd { margin: 0; }
+.stack-actions { display: flex; justify-content: flex-end; gap: 6px; }
+
+/* --- Блокнот --- */
+.notepad-body {
+  height: 100%;
+  padding: 6px 8px;
+  font-family: var(--mono);
+  font-size: 13px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  overflow: auto;
+  background: var(--field);
+}
+
+/* --- Окно сообщения (Outlook Express) --- */
+.mail-head { border-bottom: 1px solid var(--shadow); padding-bottom: 8px; margin-bottom: 8px; }
+.mail-row { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+.mail-row label { width: 60px; font-size: var(--chrome-size); }
+.mail-row .field { flex: 1; }
+.mail-toolbar { display: flex; gap: 4px; margin-bottom: 8px; }
+
+/* --- Диалог-сообщение (MessageBox) --- */
+.msgbox { display: flex; gap: 14px; align-items: flex-start; padding: 6px 4px 0; }
+.msgbox img { width: 32px; height: 32px; flex: none; }
+.msgbox p { font-size: var(--body-size); }
+
+/* --- Синий экран --- */
+#bsod {
+  position: fixed;
+  inset: 0;
+  z-index: 9900;
+  padding: 8vh 8vw;
+  background: #0000aa;
+  color: #fff;
+  font-family: var(--mono);
+  font-size: clamp(12px, 1.6vw, 15px);
+  line-height: 1.6;
+}
+#bsod b { background: #aaa; color: #0000aa; padding: 0 6px; }
+
+/* ── 10. Мобильный режим ────────────────────────────────────────────────── */
+/* Перетаскиваемые окна на телефоне не работают: окна всегда развёрнуты,
+   переключение — через таскбар, иконки выкладываются сеткой. */
+
+@media (max-width: 720px), (pointer: coarse) {
+  :root { --chrome-size: 12px; --body-size: 14px; --taskbar-h: 34px; }
+
+  #desktop-icons {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-content: flex-start;
+    gap: 6px 4px;
+    right: 8px;
+    max-height: none;
+  }
+  .desktop-icon { width: calc(25% - 4px); }
+  #desktop::after { display: none; }
+
+  .win { inset: 0 !important; width: auto !important; height: auto !important; padding: 2px; }
+  .win-resize { display: none; }
+  .win-title { height: 26px; }
+  .tb-btn { width: 22px; height: 20px; }
+  .tb-btn[data-act="min"] { display: none; }
+
+  .task-btn { flex: 1 1 0; }
+  #tray { padding: 0 4px; gap: 4px; }
+
+  .stack-row { grid-template-columns: 20px 1fr; }
+  .stack-freq { grid-column: 2; }
+  .stack-detail { padding-left: 14px; }
+
+  .logon-row label { width: 70px; }
+}
+
+/* Узкий экран: таблицы не ломают вёрстку, а скроллятся внутри своего блока */
+.table-scroll { overflow-x: auto; }
+
+@media (prefers-reduced-motion: reduce) {
+  .splash-bar > i { animation: none; width: 100%; }
+  #bios .caret { animation: none; }
+}
+
+/* ── Экран выключения ───────────────────────────────────────────────────── */
+
+#off { background: #000; display: none; place-items: center; }
+#boot > section#off.on { display: grid; }
+.off-inner { text-align: center; }
+.off-inner p {
+  margin: 0 0 24px;
+  font-size: clamp(16px, 3vw, 24px);
+  color: #e8a33d;               /* тот самый оранжевый на чёрном */
+  letter-spacing: 0.5px;
+}
