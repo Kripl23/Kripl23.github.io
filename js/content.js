@@ -5,8 +5,9 @@
    технологий и записи об опыте. Логики тут нет — только данные.
    Правки контента делаются в этом файле и больше нигде.
 
-   Места, помеченные ЗАПОЛНИТЬ, оставлены под ручное заполнение.
-   Найти их все: grep -n "ЗАПОЛНИТЬ" js/content.js
+   Структура: DICT — строки интерфейса на трёх языках, STACK — технологии,
+   DOCS — документы («Мои документы»), LINKS — контакты, BIOS_LINES — текст
+   экрана загрузки.
    ========================================================================== */
 
 /* ── Словарь интерфейса ──────────────────────────────────────────────────── */
@@ -583,8 +584,7 @@ const STACK = [
   },
 ];
 
-/* ── Данные: опыт («Мои документы») ──────────────────────────────────────── */
-/* ЗАПОЛНИТЬ: даты и содержание второго документа — проверь и поправь под себя. */
+/* ── Данные: опыт и образование («Мои документы») ─────────────────────────── */
 
 const DOCS = [
   {
@@ -660,52 +660,54 @@ I used them are in the Add/Remove Programs window.`,
     },
   },
   {
-    id: 'before',
-    file: { ru: 'До_РуСтат.doc', en: 'Before_RuStat.doc', ja: 'RuStat以前.doc' },
+    id: 'education',
+    file: { ru: 'Образование.doc', en: 'Education.doc', ja: '学歴.doc' },
     sizeKb: 6,
     type: 'typeDoc',
     modified: { ru: '01.02.2024', en: '01.02.2024', ja: '2024/02/01' },
     icon: 'doc',
     title: {
-      ru: '2021 — 2024\nСамостоятельное обучение',
-      en: '2021 — 2024\nSelf-taught',
-      ja: '2021年 — 2024年\n独学',
+      ru: 'Образование\nКолледж связи №54',
+      en: 'Education\nCollege of Communications No. 54',
+      ja: '学歴\n第54通信カレッジ',
     },
     body: {
-      /* ЗАПОЛНИТЬ: здесь описание того, что было до РуСтат.
-         Ниже — заготовка, перепиши под свою реальную историю. */
-      ru: `[[ЗАПОЛНИТЬ: короткий рассказ о том, что было до работы]]
+      ru: `  Специальность
+    Информационные системы и программирование
 
-Заготовка, замени на своё:
+  Квалификация
+    Техник по компьютерным системам
 
-  · пришёл в Python через скрипты автоматизации
-    и первые телеграм-боты;
-  · разбирался с базами данных, HTTP и тем,
-    как вообще устроена серверная часть;
-  · довёл несколько своих проектов до состояния,
-    когда они работают на сервере, а не только
-    на моей машине.`,
-      en: `[[FILL IN: a short note about what came before the job]]
+  Дипломная работа
+    «Настройка туннелей site-to-site VPN»
 
-Draft — replace with your own:
+Специальность сетевая, и это до сих пор помогает:
+когда сервис отваливается, вопрос «а дошёл ли вообще
+пакет» задаётся раньше, чем «что не так с кодом».`,
+      en: `  Programme
+    Information systems and programming
 
-  · came to Python through automation scripts
-    and the first Telegram bots;
-  · worked through databases, HTTP and how the
-    server side is put together in general;
-  · took several personal projects to the point
-    where they run on a server instead of only
-    on my own machine.`,
-      ja: `[[要記入: 就業前の経緯を短くまとめる]]
+  Qualification
+    Computer systems technician
 
-下書き — 自分の内容に差し替えてください:
+  Diploma thesis
+    "Configuring site-to-site VPN tunnels"
 
-  · 自動化スクリプトと最初の Telegram ボットを通じて
-    Python を始めました
-  · データベース、HTTP、サーバーサイドの仕組みを
-    一通り学びました
-  · いくつかの個人プロジェクトを、手元だけでなく
-    サーバー上で動く状態まで仕上げました`,
+It was a networking programme, and that still pays off:
+when a service goes quiet, "did the packet even arrive"
+gets asked before "what is wrong with the code".`,
+      ja: `  専攻
+    情報システムとプログラミング
+
+  資格
+    コンピュータシステム技術者
+
+  卒業論文
+    「サイト間 VPN トンネルの構築」
+
+ネットワーク系の専攻で、それが今も役に立っています。
+サービスが応答しなくなったとき、「コードの問題か」より先に
+「そもそもパケットは届いたのか」を確認する癖がつきました。`,
     },
   },
   {
@@ -722,6 +724,7 @@ Python-разработчик · Россия
 
 КОНТАКТЫ
   Почта      krippi22322@gmail.com
+  Telegram   @Kripl2232
   GitHub     github.com/Kripl23
   LinkedIn   linkedin.com/in/roman-kolchin
 
@@ -738,14 +741,22 @@ Python-разработчик · Россия
   Знаком     pyrogram, Keycloak (OAuth2 / OIDC)
   Редко      JavaScript
 
+ОБРАЗОВАНИЕ
+  Колледж связи №54
+  Информационные системы и программирование,
+  техник по компьютерным системам.
+  Диплом: «Настройка туннелей site-to-site VPN».
+
 ЯЗЫКИ
-  Русский — родной
-  [[ЗАПОЛНИТЬ: уровень английского и японского, если нужно]]`,
+  Русский      родной
+  Английский   свободно
+  Японский     JLPT N5 (начальный)`,
       en: `ROMAN KOLCHIN
 Python Developer · Russia
 
 CONTACTS
   Email      krippi22322@gmail.com
+  Telegram   @Kripl2232
   GitHub     github.com/Kripl23
   LinkedIn   linkedin.com/in/roman-kolchin
 
@@ -762,14 +773,22 @@ STACK
   Familiar   pyrogram, Keycloak (OAuth2 / OIDC)
   Rarely     JavaScript
 
+EDUCATION
+  College of Communications No. 54
+  Information systems and programming,
+  computer systems technician.
+  Thesis: "Configuring site-to-site VPN tunnels".
+
 LANGUAGES
-  Russian — native
-  [[FILL IN: English and Japanese levels if you want them here]]`,
+  Russian      native
+  English      fluent
+  Japanese     JLPT N5 (beginner)`,
       ja: `ロマン・コルチン
 Python 開発者 · ロシア
 
 連絡先
   メール     krippi22322@gmail.com
+  Telegram   @Kripl2232
   GitHub     github.com/Kripl23
   LinkedIn   linkedin.com/in/roman-kolchin
 
@@ -786,9 +805,16 @@ Python 開発者 · ロシア
   経験あり   pyrogram, Keycloak (OAuth2 / OIDC)
   使用頻度低 JavaScript
 
+学歴
+  第54通信カレッジ
+  情報システムとプログラミング専攻、
+  コンピュータシステム技術者。
+  卒業論文：「サイト間 VPN トンネルの構築」
+
 言語
-  ロシア語 — 母語
-  [[要記入: 英語・日本語のレベル]]`,
+  ロシア語     母語
+  英語         流暢
+  日本語       JLPT N5（初級）`,
     },
   },
 ];
@@ -854,13 +880,11 @@ const BIOS_LINES = {
 };
 
 /* ── Контакты ────────────────────────────────────────────────────────────── */
-/* ЗАПОЛНИТЬ: добавь Telegram или другие контакты, если нужно. */
-
 const LINKS = [
   { label: 'E-mail',   value: 'krippi22322@gmail.com',              href: 'mailto:krippi22322@gmail.com', icon: 'mail' },
   { label: 'GitHub',   value: 'github.com/Kripl23',                 href: 'https://github.com/Kripl23', icon: 'github' },
   { label: 'LinkedIn', value: 'linkedin.com/in/roman-kolchin',      href: 'https://www.linkedin.com/in/roman-kolchin/', icon: 'linkedin' },
-  // { label: 'Telegram', value: '@[[ЗАПОЛНИТЬ]]', href: 'https://t.me/[[ЗАПОЛНИТЬ]]', icon: 'bot' },
+  { label: 'Telegram', value: '@Kripl2232',                   href: 'https://t.me/Kripl2232', icon: 'telegram' },
 ];
 
 /* ── Переключение языка ──────────────────────────────────────────────────── */

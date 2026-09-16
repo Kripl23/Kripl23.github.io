@@ -87,8 +87,6 @@
   }
 
   function paneUser() {
-    /* ЗАПОЛНИТЬ: положи фотографию в img/photo.jpg — она подхватится сама.
-       Пока файла нет, на его месте показывается рамка-заглушка. */
     const photo = el('img', {
       src: 'img/photo.jpg', alt: '', width: 96, height: 120,
       style: 'width:96px;height:120px;object-fit:cover;display:block',
@@ -607,7 +605,16 @@
 
   let openSubmenu = null;
 
+  /* Подменю переключается и закрывается с небольшой задержкой. Без неё курсор
+     по дороге к выпавшему меню задевает соседние пункты, и оно подменяется
+     или исчезает. В оригинальной оболочке была ровно такая же пауза. */
+  const HOVER_DELAY = 250;
+  let hoverTimer = null;
+  const scheduleMenu = fn => { clearTimeout(hoverTimer); hoverTimer = setTimeout(fn, HOVER_DELAY); };
+  const cancelMenu = () => clearTimeout(hoverTimer);
+
   function closeSubmenu() {
+    cancelMenu();
     if (openSubmenu) { openSubmenu.remove(); openSubmenu = null; }
     document.querySelectorAll('.menu-item.open').forEach(n => n.classList.remove('open'));
   }
@@ -633,6 +640,7 @@
         node.classList.add('open');
         const menu = el('div.submenu');
         submenu().forEach(child => menu.appendChild(menuItem(child)));
+        menu.addEventListener('mouseenter', cancelMenu);
         document.body.appendChild(menu);
         const r = node.getBoundingClientRect();
         const mh = menu.offsetHeight;
@@ -640,10 +648,21 @@
         menu.style.top = Math.max(4, Math.min(r.top, window.innerHeight - mh - 34)) + 'px';
         openSubmenu = menu;
       };
-      node.addEventListener('mouseenter', show);
-      node.addEventListener('click', show);
+      node.addEventListener('mouseenter', () => {
+        cancelMenu();
+        if (node.classList.contains('open')) return;   // это подменю уже открыто
+        if (openSubmenu) scheduleMenu(show);           // переключаемся не сразу
+        else show();
+      });
+      node.addEventListener('mouseleave', cancelMenu);
+      node.addEventListener('click', () => { cancelMenu(); show(); });
     } else {
-      node.addEventListener('mouseenter', closeSubmenu);
+      // Пункт закрывает чужое подменю, но не то, в котором сам находится —
+      // иначе меню исчезало ровно в тот момент, когда до него доводили мышь.
+      node.addEventListener('mouseenter', () => {
+        if (node.closest('.submenu')) { cancelMenu(); return; }
+        if (openSubmenu) scheduleMenu(closeSubmenu);
+      });
       node.addEventListener('click', () => { closeStart(); if (action) action(); });
     }
     return node;
