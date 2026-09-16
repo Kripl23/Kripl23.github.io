@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" shape-rendering="crispEdges">
+<g transform="translate(8 8)">
+  <path d="M-7 0h14M0-7v14M-5-5l10 10M5-5L-5 5" stroke="#000" stroke-width="1.4"/>
+  <circle r="4.6" fill="#000"/>
+  <rect x="-3" y="-3" width="2" height="2" fill="#fff"/>
+</g>
+<path d="M1.6 1.6l12.8 12.8M14.4 1.6L1.6 14.4" stroke="#e00000" stroke-width="2.2"/>
+</svg>

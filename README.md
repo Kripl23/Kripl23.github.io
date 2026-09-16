@@ -16,7 +16,7 @@ index.html        каркас: экраны загрузки, рабочий с
 css/style.css     вся эстетика Windows 2000
 js/content.js     ВЕСЬ текст сайта и три языка (RU / EN / JA)
 js/wm.js          оконный менеджер: перетаскивание, размер, фокус
-js/app.js         рабочий стол, меню «Пуск» и содержимое окон
+js/app.js         рабочий стол, меню «Пуск», содержимое окон и «Сапёр»
 js/boot.js        последовательность загрузки
 img/icons/        иконки, нарисованные вручную в стилистике эпохи
 resume.txt        резюме обычным текстом
@@ -47,7 +47,7 @@ convert img/photo-full.jpg -resize 288x -strip -interlace Plane \
 
 Адрес вида `kripl23.github.io/#stack` открывает нужное окно сразу.
 Доступны: `about`, `stack`, `docs`, `network`, `mail`, `bin`, `winver`,
-а также документы: `rustat`, `education`, `resume`.
+`minesweeper`, а также документы: `rustat`, `education`, `resume`.
 
 ## Локальный запуск
 

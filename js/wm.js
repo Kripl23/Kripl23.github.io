@@ -55,7 +55,10 @@ const WM = (() => {
    *   title      строка или функция — подпись в заголовке и на таскбаре
    *   icon       путь к иконке 16×16
    *   body       функция, возвращающая DOM-узел с содержимым окна
-   *   menubar    массив пунктов строки меню, или функция (необязательно)
+   *   menubar    строка меню: массив (или функция, его возвращающая) из
+   *              строк — тогда пункты декоративные — либо объектов
+   *              { label, items: [{ label, action, checked, sep }] }
+   *              для настоящего выпадающего меню
    *   status     массив строк строки состояния, или функция (необязательно)
    *   width      начальная ширина, px
    *   height     начальная высота, px
@@ -107,13 +110,14 @@ const WM = (() => {
           <button class="tb-btn" data-act="close" aria-label="Закрыть" title="Закрыть"></button>
         </div>
       </div>
-      ${cfg.menubar ? `<div class="win-menubar">${resolve(cfg.menubar).map(m => `<span>${m}</span>`).join('')}</div>` : ''}
+      ${cfg.menubar ? '<div class="win-menubar"></div>' : ''}
       <div class="win-body${cfg.flush ? ' flush' : ''}${cfg.fill ? ' fill' : ''}"></div>
       ${cfg.status ? `<div class="win-status">${resolve(cfg.status).map(s => `<span>${s}</span>`).join('')}</div>` : ''}
       ${cfg.resizable ? '<div class="win-resize"></div>' : ''}
     `;
 
     el.querySelector('.win-caption').textContent = resolve(cfg.title, params);
+    if (cfg.menubar) paintMenubar(el.querySelector('.win-menubar'), cfg.menubar);
 
     const body = el.querySelector('.win-body');
     const content = cfg.body ? cfg.body(params) : null;
@@ -158,6 +162,55 @@ const WM = (() => {
     el.style.height = h + 'px';
     el.style.left = left + 'px';
     el.style.top = top + 'px';
+  }
+
+  /* ── Строка меню ───────────────────────────────────────────────────── */
+
+  let menuOpen = null;   // открытое выпадающее меню строки меню
+
+  function closeMenubar() {
+    if (menuOpen) { menuOpen.el.remove(); menuOpen.owner.classList.remove('active'); menuOpen = null; }
+  }
+  document.addEventListener('pointerdown', e => {
+    if (menuOpen && !e.target.closest('.menubar-drop') && !e.target.closest('.win-menubar')) closeMenubar();
+  });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeMenubar(); });
+
+  function paintMenubar(bar, spec) {
+    bar.innerHTML = '';
+    resolve(spec).forEach(entry => {
+      // Строка — декоративный пункт, объект — настоящее меню
+      const label = typeof entry === 'string' ? entry : entry.label;
+      const item = document.createElement('span');
+      item.textContent = label;
+      bar.appendChild(item);
+      if (typeof entry === 'string' || !entry.items) return;
+
+      item.addEventListener('pointerdown', e => {
+        e.stopPropagation();
+        const wasOpen = menuOpen && menuOpen.owner === item;
+        closeMenubar();
+        if (wasOpen) return;
+
+        const drop = document.createElement('div');
+        drop.className = 'menubar-drop';
+        entry.items.forEach(sub => {
+          if (sub.sep) { drop.appendChild(Object.assign(document.createElement('div'), { className: 'menu-sep' })); return; }
+          const btn = document.createElement('button');
+          btn.className = 'menubar-item' + (sub.checked ? ' checked' : '');
+          btn.textContent = sub.label;
+          btn.addEventListener('click', () => { closeMenubar(); if (sub.action) sub.action(); });
+          drop.appendChild(btn);
+        });
+        document.body.appendChild(drop);
+
+        const r = item.getBoundingClientRect();
+        drop.style.left = Math.min(r.left, window.innerWidth - drop.offsetWidth - 4) + 'px';
+        drop.style.top = Math.min(r.bottom, window.innerHeight - drop.offsetHeight - 34) + 'px';
+        item.classList.add('active');
+        menuOpen = { el: drop, owner: item };
+      });
+    });
   }
 
   function wireControls(winId, rec) {
@@ -333,7 +386,7 @@ const WM = (() => {
       rec.el.setAttribute('aria-label', resolve(cfg.title, rec.params));
 
       const bar = rec.el.querySelector('.win-menubar');
-      if (bar && cfg.menubar) bar.innerHTML = resolve(cfg.menubar).map(m => `<span>${m}</span>`).join('');
+      if (bar && cfg.menubar) paintMenubar(bar, cfg.menubar);
 
       const st = rec.el.querySelector('.win-status');
       if (st && cfg.status) st.innerHTML = resolve(cfg.status).map(s => `<span>${s}</span>`).join('');

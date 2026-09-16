@@ -927,3 +927,157 @@ fieldset.group > legend { padding: 0 4px; font-size: var(--chrome-size); }
   color: #e8a33d;               /* тот самый оранжевый на чёрном */
   letter-spacing: 0.5px;
 }
+
+/* ── Выпадающее меню строки меню ────────────────────────────────────────── */
+
+.win-menubar > span.active { background: var(--select); color: var(--select-text); }
+
+.menubar-drop {
+  position: fixed;
+  min-width: 130px;
+  padding: 2px;
+  background: var(--face);
+  border: 1px solid;
+  border-color: var(--hilite) var(--shadow-dark) var(--shadow-dark) var(--hilite);
+  box-shadow: inset 1px 1px 0 var(--face-light), inset -1px -1px 0 var(--shadow);
+  z-index: 9600;
+}
+
+.menubar-item {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  height: auto;
+  padding: 3px 18px 3px 22px;
+  position: relative;
+  font-size: var(--body-size);
+  text-align: left;
+  background: none;
+  border: none;
+  box-shadow: none;
+}
+.menubar-item:active { padding: 3px 18px 3px 22px; box-shadow: none; }
+.menubar-item:hover { background: var(--select); color: var(--select-text); }
+/* Галочка у выбранного уровня сложности */
+.menubar-item.checked::before {
+  content: "";
+  position: absolute;
+  left: 8px;
+  top: 50%;
+  width: 4px;
+  height: 8px;
+  margin-top: -6px;
+  border: solid currentColor;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+/* ── Сапёр ──────────────────────────────────────────────────────────────── */
+
+.mine-app {
+  display: inline-block;
+  padding: 5px;
+  background: var(--face);
+  border: 3px solid;
+  border-color: var(--hilite) var(--shadow) var(--shadow) var(--hilite);
+}
+
+/* Табло: счётчик мин, смайлик, таймер */
+.mine-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 5px;
+  padding: 4px;
+  border: 2px solid;
+  border-color: var(--shadow) var(--hilite) var(--hilite) var(--shadow);
+}
+
+/* Красные цифры на чёрном — семисегментный индикатор эпохи */
+.mine-lcd {
+  padding: 1px 2px;
+  font-family: var(--mono);
+  font-size: 19px;
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: 1px;
+  color: #ff0000;
+  background: #000;
+  border: 1px solid;
+  border-color: var(--shadow) var(--hilite) var(--hilite) var(--shadow);
+}
+
+.mine-face {
+  width: 26px;
+  height: 26px;
+  min-width: 0;
+  padding: 2px;
+  display: grid;
+  place-items: center;
+}
+.mine-face img { width: 100%; height: 100%; image-rendering: auto; }
+.mine-face:active { padding: 3px 1px 1px 3px; }
+
+.mine-grid {
+  display: grid;
+  border: 3px solid;
+  border-color: var(--shadow) var(--hilite) var(--hilite) var(--shadow);
+  background: #bdbdbd;
+  touch-action: manipulation;
+}
+
+.mine-cell {
+  width: 16px;
+  height: 16px;
+  min-width: 0;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  font-family: var(--ui);
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+  background: #bdbdbd;
+  border: 2px solid;
+  border-color: var(--hilite) var(--shadow) var(--shadow) var(--hilite);
+  box-shadow: none;
+}
+.mine-cell:active { padding: 0; }
+.mine-cell img { width: 13px; height: 13px; image-rendering: auto; }
+
+/* Открытая клетка: плоская, с тонкой серой линией сверху и слева */
+.mine-cell.open {
+  border: 1px solid #808080;
+  border-right-color: #bdbdbd;
+  border-bottom-color: #bdbdbd;
+}
+.mine-cell.boom { background: #ff0000; }
+
+/* Классические цвета цифр */
+.mine-cell.n1 { color: #0000ff; }
+.mine-cell.n2 { color: #008000; }
+.mine-cell.n3 { color: #ff0000; }
+.mine-cell.n4 { color: #000080; }
+.mine-cell.n5 { color: #800000; }
+.mine-cell.n6 { color: #008080; }
+.mine-cell.n7 { color: #000000; }
+.mine-cell.n8 { color: #808080; }
+
+/* Переключатель режима флажков — нужен там, где нет правой кнопки мыши */
+.mine-flagmode { display: none; }
+@media (pointer: coarse) {
+  .mine-cell { width: 22px; height: 22px; font-size: 14px; }
+  .mine-cell img { width: 17px; height: 17px; }
+  .mine-flagmode {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 6px;
+  }
+  .mine-flagmode button { flex: 1; height: 28px; }
+  .mine-flagmode button.on {
+    border-color: var(--shadow-dark) var(--hilite) var(--hilite) var(--shadow-dark);
+    box-shadow: inset 1px 1px 0 var(--shadow);
+  }
+}

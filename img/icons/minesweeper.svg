@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" shape-rendering="crispEdges">
+<rect x="2" y="2" width="28" height="28" fill="#c0c0c0" stroke="#000"/>
+<path d="M4 4h12v12H4z" fill="#c0c0c0" stroke="#808080"/>
+<path d="M17 4h11v12H17z" fill="#c0c0c0" stroke="#808080"/>
+<path d="M4 17h12v11H4z" fill="#c0c0c0" stroke="#808080"/>
+<text x="10" y="14" font-family="Tahoma,Verdana,sans-serif" font-size="10" font-weight="700" fill="#0000ff" text-anchor="middle">1</text>
+<text x="10" y="27" font-family="Tahoma,Verdana,sans-serif" font-size="10" font-weight="700" fill="#008000" text-anchor="middle">2</text>
+<g transform="translate(22.5 10)">
+  <circle r="4.5" fill="#000"/>
+  <path d="M-6.5 0h13M0-6.5v13M-4.6-4.6l9.2 9.2M4.6-4.6l-9.2 9.2" stroke="#000" stroke-width="1.6"/>
+  <rect x="-2.6" y="-2.6" width="2" height="2" fill="#fff"/>
+</g>
+<g transform="translate(22 23)">
+  <path d="M0-6v12" stroke="#000" stroke-width="1.6"/>
+  <path d="M0-6l-6 2.6L0-0.8z" fill="#f00"/>
+  <path d="M-4 6h8v1.6h-8z" fill="#000"/>
+</g>
+</svg>

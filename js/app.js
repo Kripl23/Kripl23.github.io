@@ -381,6 +381,7 @@
       'ncpa.cpl': () => WM.launch('network'),
       'mail': () => WM.launch('mail'),
       'python': () => WM.launch('stack'),
+      'winmine': () => WM.launch('minesweeper'),
       'format c:': () => blueScreen(),
       'format c': () => blueScreen(),
     };
@@ -464,6 +465,283 @@
     );
   }
 
+  /* ══ Приложение: Сапёр ══════════════════════════════════════════════════ */
+  /* Классические правила: первый щелчок никогда не попадает на мину, пустые
+     клетки раскрываются волной, щелчок по открытой цифре с расставленными
+     вокруг флажками открывает соседей. Партия хранится вне функции сборки,
+     чтобы смена языка не сбрасывала начатую игру. */
+
+  const MINE_LEVELS = {
+    beginner:     { w: 9,  h: 9,  mines: 10, key: 'mineBeginner' },
+    intermediate: { w: 16, h: 16, mines: 40, key: 'mineIntermediate' },
+    expert:       { w: 30, h: 16, mines: 99, key: 'mineExpert' },
+  };
+
+  const COVERED = 0, OPEN = 1, FLAG = 2, QUESTION = 3;
+
+  let mine = null;        // текущая партия
+  let mineLevel = 'beginner';
+  let mineFlagMode = false;
+
+  function mineReset(level) {
+    if (level) mineLevel = level;
+    const L = MINE_LEVELS[mineLevel];
+    if (mine && mine.timer) clearInterval(mine.timer);
+    mine = {
+      w: L.w, h: L.h, total: L.mines,
+      bomb: new Uint8Array(L.w * L.h),
+      near: new Uint8Array(L.w * L.h),
+      state: new Uint8Array(L.w * L.h),
+      placed: false, dead: false, won: false,
+      opened: 0, time: 0, timer: null,
+      cells: [],
+    };
+  }
+
+  const mineIdx = (x, y) => y * mine.w + x;
+
+  function mineNeighbours(i) {
+    const x = i % mine.w, y = (i / mine.w) | 0;
+    const out = [];
+    for (let dy = -1; dy <= 1; dy++) {
+      for (let dx = -1; dx <= 1; dx++) {
+        if (!dx && !dy) continue;
+        const nx = x + dx, ny = y + dy;
+        if (nx < 0 || ny < 0 || nx >= mine.w || ny >= mine.h) continue;
+        out.push(mineIdx(nx, ny));
+      }
+    }
+    return out;
+  }
+
+  /** Мины расставляются после первого щелчка — по нему промахнуться нельзя. */
+  function minePlace(safe) {
+    const size = mine.w * mine.h;
+    let left = mine.total;
+    while (left > 0) {
+      const i = Math.floor(Math.random() * size);
+      if (i === safe || mine.bomb[i]) continue;
+      mine.bomb[i] = 1;
+      left--;
+    }
+    for (let i = 0; i < size; i++) {
+      if (mine.bomb[i]) continue;
+      mine.near[i] = mineNeighbours(i).reduce((n, j) => n + mine.bomb[j], 0);
+    }
+    mine.placed = true;
+  }
+
+  function mineStartTimer() {
+    if (mine.timer) return;
+    mine.timer = setInterval(() => {
+      if (mine.time >= 999) return;
+      mine.time++;
+      minePaintHead();
+    }, 1000);
+  }
+
+  function mineStopTimer() {
+    if (mine.timer) { clearInterval(mine.timer); mine.timer = null; }
+  }
+
+  function mineOpen(i) {
+    if (mine.dead || mine.won) return;
+    if (mine.state[i] === FLAG || mine.state[i] === OPEN) return;
+    if (!mine.placed) { minePlace(i); mineStartTimer(); }
+
+    if (mine.bomb[i]) { mineLose(i); return; }
+
+    // Волна раскрытия: пустые клетки тянут за собой соседей
+    const stack = [i];
+    while (stack.length) {
+      const j = stack.pop();
+      if (mine.state[j] === OPEN || mine.state[j] === FLAG) continue;
+      mine.state[j] = OPEN;
+      mine.opened++;
+      if (mine.near[j] === 0) mineNeighbours(j).forEach(n => stack.push(n));
+    }
+
+    if (mine.opened === mine.w * mine.h - mine.total) mineWin();
+    minePaint();
+  }
+
+  /** Щелчок по открытой цифре открывает соседей, если флажков вокруг ровно
+      столько, сколько показывает цифра. */
+  function mineChord(i) {
+    if (mine.dead || mine.won || mine.state[i] !== OPEN || !mine.near[i]) return;
+    const around = mineNeighbours(i);
+    const flags = around.filter(j => mine.state[j] === FLAG).length;
+    if (flags !== mine.near[i]) return;
+    around.forEach(j => { if (mine.state[j] !== FLAG) mineOpen(j); });
+  }
+
+  function mineMark(i) {
+    if (mine.dead || mine.won || mine.state[i] === OPEN) return;
+    mine.state[i] = mine.state[i] === COVERED ? FLAG
+                  : mine.state[i] === FLAG ? QUESTION
+                  : COVERED;
+    minePaint();
+  }
+
+  function mineLose(hit) {
+    mine.dead = true;
+    mine.hit = hit;
+    mineStopTimer();
+    minePaint();
+  }
+
+  function mineWin() {
+    mine.won = true;
+    mineStopTimer();
+    for (let i = 0; i < mine.bomb.length; i++) if (mine.bomb[i]) mine.state[i] = FLAG;
+  }
+
+  const mineFlagsLeft = () => {
+    let f = 0;
+    for (let i = 0; i < mine.state.length; i++) if (mine.state[i] === FLAG) f++;
+    return mine.total - f;
+  };
+
+  const mineLcd = n => (n < 0 ? '-' + String(Math.min(99, -n)).padStart(2, '0')
+                              : String(Math.min(999, n)).padStart(3, '0'));
+
+  function minePaintHead() {
+    if (!mine.head) return;
+    mine.head.left.textContent = mineLcd(mineFlagsLeft());
+    mine.head.time.textContent = mineLcd(mine.time);
+    const face = mine.dead ? 'face-dead' : mine.won ? 'face-cool' : 'face-smile';
+    mine.head.face.src = icon(face);
+  }
+
+  function minePaint() {
+    minePaintHead();
+    for (let i = 0; i < mine.cells.length; i++) {
+      const cell = mine.cells[i];
+      if (!cell) continue;
+      cell.className = 'mine-cell';
+      cell.textContent = '';
+
+      const st = mine.state[i];
+      const reveal = mine.dead && mine.bomb[i] && st !== FLAG;
+      const wrongFlag = mine.dead && !mine.bomb[i] && st === FLAG;
+
+      if (st === FLAG && !wrongFlag) { cell.appendChild(mineImg('mine-flag')); continue; }
+      if (wrongFlag) { cell.className = 'mine-cell open'; cell.appendChild(mineImg('mine-wrong')); continue; }
+      if (st === QUESTION) { cell.textContent = '?'; continue; }
+      if (reveal) {
+        cell.className = 'mine-cell open' + (i === mine.hit ? ' boom' : '');
+        cell.appendChild(mineImg('mine-bomb'));
+        continue;
+      }
+      if (st === OPEN) {
+        cell.className = 'mine-cell open' + (mine.near[i] ? ' n' + mine.near[i] : '');
+        if (mine.near[i]) cell.textContent = String(mine.near[i]);
+      }
+    }
+  }
+
+  const mineImg = name => el('img', { src: icon(name), alt: '' });
+
+  function buildMinesweeper() {
+    if (!mine) mineReset();
+    mine.cells = [];
+
+    const left = el('span.mine-lcd');
+    const time = el('span.mine-lcd');
+    const faceImg = el('img', { src: icon('face-smile'), alt: '' });
+    const face = el('button.mine-face', {
+      title: t('mineNew'),
+      onclick: () => { mineReset(); WM.rebuild(); },
+    }, faceImg);
+    mine.head = { left, time, face: faceImg };
+
+    const grid = el('div.mine-grid', {
+      style: `grid-template-columns: repeat(${mine.w}, max-content)`,
+      oncontextmenu: e => e.preventDefault(),
+    });
+
+    for (let i = 0; i < mine.w * mine.h; i++) {
+      const cell = el('button.mine-cell', { type: 'button' });
+      // Пока кнопка нажата — смайлик «ой»
+      cell.addEventListener('pointerdown', () => {
+        if (!mine.dead && !mine.won) faceImg.src = icon('face-oh');
+      });
+      cell.addEventListener('pointerup', () => minePaintHead());
+      cell.addEventListener('pointercancel', () => minePaintHead());
+      cell.addEventListener('click', () => {
+        if (mineFlagMode) mineMark(i);
+        else if (mine.state[i] === OPEN) mineChord(i);
+        else mineOpen(i);
+      });
+      cell.addEventListener('contextmenu', e => { e.preventDefault(); mineMark(i); });
+      mine.cells.push(cell);
+      grid.appendChild(cell);
+    }
+
+    const flagBtn = el('button', {
+      class: mineFlagMode ? 'on' : '',
+      onclick: e => {
+        mineFlagMode = !mineFlagMode;
+        e.currentTarget.classList.toggle('on', mineFlagMode);
+        e.currentTarget.textContent = mineFlagMode ? t('mineFlagMode') : t('mineDigMode');
+      },
+    }, mineFlagMode ? t('mineFlagMode') : t('mineDigMode'));
+
+    const root = el('div.mine-app', null,
+      el('div.mine-head', null, left, face, time),
+      grid,
+      el('div.mine-flagmode', null, flagBtn),
+    );
+
+    minePaint();
+    return root;
+  }
+
+  function mineMenubar() {
+    const levels = Object.entries(MINE_LEVELS).map(([id, L]) => ({
+      label: `${t(L.key)} — ${L.w}×${L.h}, ${L.mines}`,
+      checked: mineLevel === id,
+      action: () => { mineReset(id); WM.rebuild(); mineFit(); },
+    }));
+    return [
+      { label: t('mineMenuGame'), items: [
+        { label: t('mineNew'), action: () => { mineReset(); WM.rebuild(); } },
+        { sep: true },
+        ...levels,
+      ] },
+      { label: t('menuHelp'), items: [
+        { label: t('mineHelp'), action: () => WM.message({
+          title: t('itemMinesweeper'), icon: icon('msg-info'), text: t('mineHelpText'),
+          buttons: [{ id: 'ok', label: t('ok'), def: true }],
+        }) },
+      ] },
+    ];
+  }
+
+  /** Окно подгоняется под доску: у каждого уровня свой размер. */
+  function mineFit(winEl) {
+    const el2 = winEl || (mine.cells[0] && mine.cells[0].closest('.win'));
+    if (!el2 || el2.classList.contains('maximized') || WM.isMobile()) return;
+    const body = el2.querySelector('.win-body');
+    const board = el2.querySelector('.mine-app');
+    if (!body || !board) return;
+    const chromeW = el2.offsetWidth - body.clientWidth;
+    const chromeH = el2.offsetHeight - body.clientHeight;
+    const w = board.offsetWidth + chromeW;
+    const h = board.offsetHeight + chromeH;
+    // min-width/min-height у .win рассчитаны на обычные окна и не дают доске
+    // новичка сжаться до своего размера — снимаем их для этого окна
+    el2.style.minWidth = w + 'px';
+    el2.style.minHeight = h + 'px';
+    el2.style.width = w + 'px';
+    el2.style.height = h + 'px';
+
+    // Окно могло вырасти за край рабочего стола при смене уровня
+    const area = el2.parentElement.getBoundingClientRect();
+    el2.style.left = Math.max(4, Math.min(parseInt(el2.style.left, 10) || 0, area.width - w - 4)) + 'px';
+    el2.style.top = Math.max(4, Math.min(parseInt(el2.style.top, 10) || 0, area.height - h - 4)) + 'px';
+  }
+
   /* ══ Регистрация приложений ═════════════════════════════════════════════ */
 
   function registerApps() {
@@ -519,6 +797,14 @@
     WM.register('winver', {
       title: () => t('winverTitle'), icon: icon('flag'),
       width: 400, height: 240, resizable: false, body: buildWinver,
+    });
+
+    WM.register('minesweeper', {
+      title: () => t('itemMinesweeper'), icon: icon('minesweeper'),
+      width: 260, height: 330, resizable: false, flush: true,
+      menubar: mineMenubar, body: buildMinesweeper,
+      onMount: (body, winEl) => mineFit(winEl),
+      onClose: () => { mineStopTimer(); mine = null; },
     });
 
     WM.register('shutdown', {
@@ -675,6 +961,7 @@
         { label: t('itemNotepad'), img: 'txt', small: true, action: () => WM.launch('notepad', { docId: 'resume' }) },
         { label: t('sysTitle'), img: 'my-computer', small: true, action: () => WM.launch('about') },
         { label: t('netTitle'), img: 'network', small: true, action: () => WM.launch('network') },
+        { label: t('itemMinesweeper'), img: 'minesweeper', small: true, action: () => WM.launch('minesweeper') },
       ] },
       { label: t('startDocuments'), img: 'documents', submenu: () => DOCS.map(d => ({
         label: tx(d.file), img: d.icon, small: true,
@@ -798,7 +1085,7 @@
 
   /** Адрес вида /#stack открывает нужное окно сразу — такой ссылкой удобно
       делиться, а заодно её можно положить в резюме. */
-  const DEEP_LINKS = ['about', 'stack', 'docs', 'network', 'mail', 'bin', 'winver'];
+  const DEEP_LINKS = ['about', 'stack', 'docs', 'network', 'mail', 'bin', 'winver', 'minesweeper'];
 
   function openFromHash() {
     const id = decodeURIComponent(location.hash.replace('#', '')).toLowerCase();
