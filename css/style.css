@@ -50,8 +50,23 @@
   --chrome-size: 11px;  /* заголовки, меню, таскбар */
   --body-size:   12px;  /* читаемый текст внутри окон */
 
+  /* Оригинальные размеры Windows 2000 рассчитаны на 96 dpi и на современных
+     экранах мелковаты. Вместо увеличения шрифтов масштабируется вся оболочка
+     целиком — пропорции остаются точь-в-точь как в оригинале. */
+  --ui-zoom: 1.15;
+
   --taskbar-h: 28px;
 }
+
+/* Японские глифы: MS UI Gothic эпохи Windows 2000 на экране почти нечитаем,
+   поэтому для японской локали первым в стеке стоит Meiryo. */
+html[lang="ja"] {
+  --ui: Meiryo, "Yu Gothic UI", "Hiragino Sans", "Noto Sans JP", "MS UI Gothic", Tahoma, sans-serif;
+  line-break: strict;   /* кинсоку: строка не начинается с ョ、ー и знаков препинания */
+}
+html[lang="ja"] .desktop-icon { width: 92px; }
+
+html { zoom: var(--ui-zoom); }
 
 *, *::before, *::after { box-sizing: border-box; }
 
@@ -360,6 +375,7 @@ img { max-width: 100%; image-rendering: pixelated; }
   font-size: var(--chrome-size);
 }
 .win-status > span {
+  min-width: 0;         /* иначе длинная подсказка не даёт строке ужаться */
   padding: 2px 5px;
   border: 1px solid;
   border-color: var(--shadow) var(--hilite) var(--hilite) var(--shadow);
@@ -743,7 +759,7 @@ fieldset.group > legend { padding: 0 4px; font-size: var(--chrome-size); }
   place-items: center;
 }
 #boot > section#splash.on { display: grid; }
-.splash-inner { text-align: center; width: min(420px, 82vw); }
+.splash-inner { text-align: center; width: min(420px, calc(82vw / var(--ui-zoom))); }
 .splash-logo { font-size: 13px; letter-spacing: 3px; text-transform: uppercase; color: #9aa7bf; }
 .splash-title { font-size: clamp(28px, 7vw, 44px); font-weight: 700; margin: 6px 0 4px; letter-spacing: -0.5px; }
 .splash-edition { font-size: 15px; color: #c9d3e6; margin-bottom: 34px; }
@@ -773,7 +789,7 @@ fieldset.group > legend { padding: 0 4px; font-size: var(--chrome-size); }
   place-items: center;
 }
 #boot > section#logon.on { display: grid; }
-.logon-box { width: min(420px, 90vw); padding: 3px; }
+.logon-box { width: min(420px, calc(90vw / var(--ui-zoom))); padding: 3px; }
 .logon-head {
   display: flex;
   align-items: center;

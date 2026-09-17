@@ -26,6 +26,28 @@ const WM = (() => {
   const MOBILE = '(max-width: 720px), (pointer: coarse)';
   const isMobile = () => window.matchMedia(MOBILE).matches;
 
+  /* ── Масштаб ───────────────────────────────────────────────────────── */
+  /* Вся оболочка увеличена через CSS zoom на <html>. Из-за этого координаты
+     событий мыши, getBoundingClientRect и innerWidth приходят в экранных
+     пикселях, а style.left, offsetWidth и прочая геометрия элементов — в
+     «локальных», до масштабирования. Все расчёты ведём в локальных:
+     экранные значения делим на Z. */
+
+  const Z = () => {
+    const z = parseFloat(getComputedStyle(document.documentElement).zoom);
+    return z > 0 ? z : 1;
+  };
+  /** Прямоугольник элемента в локальных пикселях. */
+  const rect = node => {
+    const r = node.getBoundingClientRect(), z = Z();
+    return { left: r.left / z, top: r.top / z, right: r.right / z, bottom: r.bottom / z,
+             width: r.width / z, height: r.height / z };
+  };
+  /** Координаты указателя в локальных пикселях. */
+  const ptr = e => { const z = Z(); return { x: e.clientX / z, y: e.clientY / z }; };
+  const vw = () => window.innerWidth / Z();
+  const vh = () => window.innerHeight / Z();
+
   /* ── Служебное ─────────────────────────────────────────────────────── */
 
   function emit() { listeners.forEach(fn => fn(list())); }
@@ -147,7 +169,7 @@ const WM = (() => {
   /** Первичное размещение: по центру рабочего стола со сдвигом каскадом,
       чтобы окна не ложились друг на друга ровно. */
   function placeInitial(el, cfg) {
-    const area = layer.getBoundingClientRect();
+    const area = rect(layer);
     const w = Math.min(cfg.width, area.width - 16);
     const h = Math.min(cfg.height, area.height - 16);
     const step = (cascade % 6) * 22;
@@ -204,9 +226,9 @@ const WM = (() => {
         });
         document.body.appendChild(drop);
 
-        const r = item.getBoundingClientRect();
-        drop.style.left = Math.min(r.left, window.innerWidth - drop.offsetWidth - 4) + 'px';
-        drop.style.top = Math.min(r.bottom, window.innerHeight - drop.offsetHeight - 34) + 'px';
+        const r = rect(item);
+        drop.style.left = Math.min(r.left, vw() - drop.offsetWidth - 4) + 'px';
+        drop.style.top = Math.min(r.bottom, vh() - drop.offsetHeight - 34) + 'px';
         item.classList.add('active');
         menuOpen = { el: drop, owner: item };
       });
@@ -246,11 +268,12 @@ const WM = (() => {
       if (e.button !== undefined && e.button !== 0) return;
 
       dragging = true;
-      const r = rec.el.getBoundingClientRect();
-      const a = layer.getBoundingClientRect();
-      dx = e.clientX - r.left;
-      dy = e.clientY - r.top;
-      bar.setPointerCapture(e.pointerId);
+      const r = rect(rec.el);
+      const a = rect(layer);
+      const p = ptr(e);
+      dx = p.x - r.left;
+      dy = p.y - r.top;
+      try { bar.setPointerCapture(e.pointerId); } catch (err) { /* нет активного указателя */ }
       focus(winId);
 
       const move = ev => {
@@ -259,10 +282,11 @@ const WM = (() => {
         // иначе окно уже не поймать мышью.
         const maxLeft = a.width - 60;
         const maxTop = a.height - 24;
-        const left = Math.max(60 - rec.el.offsetWidth, Math.min(ev.clientX - a.left - dx, maxLeft));
-        const top = Math.max(0, Math.min(ev.clientY - a.top - dy, maxTop));
-        rec.el.style.left = left + 'px';
-        rec.el.style.top = top + 'px';
+        const q = ptr(ev);
+        const left = Math.max(60 - rec.el.offsetWidth, Math.min(q.x - a.left - dx, maxLeft));
+        const top = Math.max(0, Math.min(q.y - a.top - dy, maxTop));
+        rec.el.style.left = Math.round(left) + 'px';
+        rec.el.style.top = Math.round(top) + 'px';
       };
       const up = () => {
         dragging = false;
@@ -286,18 +310,20 @@ const WM = (() => {
       if (isMobile() || rec.el.classList.contains('maximized')) return;
       e.stopPropagation();
 
-      const r = rec.el.getBoundingClientRect();
-      const a = layer.getBoundingClientRect();
-      const sx = e.clientX, sy = e.clientY;
+      const r = rect(rec.el);
+      const a = rect(layer);
+      const s0 = ptr(e);
+      const sx = s0.x, sy = s0.y;
       const sw = r.width, sh = r.height;
-      grip.setPointerCapture(e.pointerId);
+      try { grip.setPointerCapture(e.pointerId); } catch (err) { /* нет активного указателя */ }
       focus(winId);
 
       const move = ev => {
-        const w = Math.max(240, Math.min(sw + (ev.clientX - sx), a.width - rec.el.offsetLeft));
-        const h = Math.max(120, Math.min(sh + (ev.clientY - sy), a.height - rec.el.offsetTop));
-        rec.el.style.width = w + 'px';
-        rec.el.style.height = h + 'px';
+        const q = ptr(ev);
+        const w = Math.max(240, Math.min(sw + (q.x - sx), a.width - rec.el.offsetLeft));
+        const h = Math.max(120, Math.min(sh + (q.y - sy), a.height - rec.el.offsetTop));
+        rec.el.style.width = Math.round(w) + 'px';
+        rec.el.style.height = Math.round(h) + 'px';
       };
       const up = () => {
         grip.removeEventListener('pointermove', move);
@@ -443,13 +469,13 @@ const WM = (() => {
       el.querySelector('[data-act="close"]').addEventListener('click', () => { el.remove(); resolve('close'); });
 
       el.style.zIndex = ++zTop;
-      el.style.width = 'min(380px, 88vw)';
+      el.style.width = Math.min(380, Math.round(vw() * 0.88)) + 'px';
       el.style.height = 'auto';
       el.style.minHeight = '0';
       layer.appendChild(el);
 
-      const a = layer.getBoundingClientRect();
-      const r = el.getBoundingClientRect();
+      const a = rect(layer);
+      const r = rect(el);
       el.style.left = Math.max(8, Math.round((a.width - r.width) / 2)) + 'px';
       el.style.top = Math.max(8, Math.round((a.height - r.height) / 2.4)) + 'px';
 
@@ -487,7 +513,7 @@ const WM = (() => {
 
     // Окно браузера уменьшилось — возвращаем уехавшие окна на рабочий стол
     window.addEventListener('resize', () => {
-      const a = layer.getBoundingClientRect();
+      const a = rect(layer);
       open.forEach(rec => {
         if (rec.el.classList.contains('maximized')) return;
         const left = parseInt(rec.el.style.left, 10) || 0;
@@ -501,6 +527,7 @@ const WM = (() => {
   return {
     init, register, launch, close, closeAll, focus, minimize, toggle, toggleMax,
     rebuild, message, list, isMobile,
+    rect, ptr, vw, vh,
     onChange: fn => listeners.push(fn),
     isOpen: appId => [...open.values()].some(w => w.appId === appId),
   };

@@ -737,7 +737,7 @@
     el2.style.height = h + 'px';
 
     // Окно могло вырасти за край рабочего стола при смене уровня
-    const area = el2.parentElement.getBoundingClientRect();
+    const area = WM.rect(el2.parentElement);
     el2.style.left = Math.max(4, Math.min(parseInt(el2.style.left, 10) || 0, area.width - w - 4)) + 'px';
     el2.style.top = Math.max(4, Math.min(parseInt(el2.style.top, 10) || 0, area.height - h - 4)) + 'px';
   }
@@ -928,10 +928,10 @@
         submenu().forEach(child => menu.appendChild(menuItem(child)));
         menu.addEventListener('mouseenter', cancelMenu);
         document.body.appendChild(menu);
-        const r = node.getBoundingClientRect();
+        const r = WM.rect(node);
         const mh = menu.offsetHeight;
-        menu.style.left = Math.min(r.right - 2, window.innerWidth - menu.offsetWidth - 4) + 'px';
-        menu.style.top = Math.max(4, Math.min(r.top, window.innerHeight - mh - 34)) + 'px';
+        menu.style.left = Math.min(r.right - 2, WM.vw() - menu.offsetWidth - 4) + 'px';
+        menu.style.top = Math.max(4, Math.min(r.top, WM.vh() - mh - 34)) + 'px';
         openSubmenu = menu;
       };
       node.addEventListener('mouseenter', () => {
@@ -1029,10 +1029,14 @@
     let menu = null;
     const kill = () => { if (menu) { menu.remove(); menu = null; } };
 
-    desktop.addEventListener('contextmenu', e => {
-      if (e.target.closest('.win')) return;   // внутри окон — обычное меню браузера
+    document.addEventListener('contextmenu', e => {
+      // Родное меню браузера остаётся только там, где оно нужно:
+      // в полях ввода, на ссылках и в выделяемом тексте (скопировать).
+      if (e.target.closest('input, textarea, a[href], .selectable')) return;
       e.preventDefault();
       kill();
+      // Своё меню показываем только на пустом рабочем столе
+      if (e.target.closest('.win, #taskbar, #start-menu, .submenu, .menubar-drop, #boot')) return;
       menu = el('div#context-menu');
       [
         { label: t('startRun'), img: 'run', small: true, action: () => WM.launch('run') },
@@ -1046,8 +1050,9 @@
         menu.appendChild(node);
       });
       document.body.appendChild(menu);
-      menu.style.left = Math.min(e.clientX, window.innerWidth - menu.offsetWidth - 4) + 'px';
-      menu.style.top = Math.min(e.clientY, window.innerHeight - menu.offsetHeight - 34) + 'px';
+      const p = WM.ptr(e);
+      menu.style.left = Math.min(p.x, WM.vw() - menu.offsetWidth - 4) + 'px';
+      menu.style.top = Math.min(p.y, WM.vh() - menu.offsetHeight - 34) + 'px';
     });
 
     document.addEventListener('click', kill);
