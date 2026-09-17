@@ -23,34 +23,8 @@ resume.txt        резюме обычным текстом
 old/              предыдущая версия сайта
 ```
 
-## Как править содержимое
-
-Весь текст лежит в `js/content.js` — больше нигде. Технологии описаны
-в массиве `STACK`, записи об опыте — в `DOCS`, строки интерфейса — в `DICT`.
-
-## Фотография
-
-Сайт показывает `img/photo.jpg` — уменьшенную копию 288×370 (≈16 КБ), рамка на
-экране всего 96×120. Оригинал лежит рядом как `img/photo-full.jpg`.
-
-Чтобы заменить фото: положи новое в `img/photo-full.jpg` и пересобери копию
-
-```sh
-convert img/photo-full.jpg -resize 288x -strip -interlace Plane \
-        -sampling-factor 4:2:0 -quality 88 img/photo.jpg
-```
-
-Если `photo.jpg` не окажется на месте, вместо сломанной картинки покажется
-рамка с подписью.
-
 ## Прямые ссылки
 
 Адрес вида `kripl23.github.io/#stack` открывает нужное окно сразу.
 Доступны: `about`, `stack`, `docs`, `network`, `mail`, `bin`, `winver`,
 `minesweeper`, а также документы: `rustat`, `education`, `resume`.
-
-## Локальный запуск
-
-```sh
-python3 -m http.server 8000
-```
